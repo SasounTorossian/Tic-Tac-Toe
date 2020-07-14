@@ -1,0 +1,37 @@
+html {
+    height: 100%;
+    width: 100%
+}
+
+body {
+    display: grid;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    min-height: 100vh;
+    grid-template-rows: 60px auto 60px;
+    grid-template-areas: 
+    "header"
+    "container"
+    "footer";
+}
+
+.header {grid-area: header;}
+
+.container {grid-area: container;}
+
+.footer {grid-area: footer;}
+
+/* HEADER */
+
+
+/* CONTAINER */
+.container {
+    display: grid;
+    margin: auto;
+    grid-template-rows: 100px 100px 100px;
+    grid-template-columns: 100px 100px 100px;
+}
+
+/* FOOTER */

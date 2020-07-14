@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+ <html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Etch-a-Sketch</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="styles/style.css">
+    </head>
+    <body>
+        <div class="header">
+            <h1 class="projectTitle">Tic-Tac-Toe</h1>
+        </div>
+
+        <div class="container" >
+        </div>
+
+        <div class="footer">
+            <p>A project by Sasoun Torossian. 2020</p>
+            <a id="gitLink" href="https://github.com/SasounTorossian">
+              <img alt="Github" src="images/Github Logo.png" height="60px"></a>
+        </div>
+
+        <script>
+            // ===== PLAYER =====
+            const Player = (name, mark) => {
+                let playerMark = mark
+                const testEcho = () => console.log(`i am player ${name} and my mark is ${mark}`)
+
+                return {
+                    playerMark,
+                    testEcho
+                }
+            }
+
+            // ===== GAMEENGINE =====
+            const gameEngine = (() => {
+                let currentPlayer = ""
+
+                const switchPlayer = () => {
+                    
+                }
+
+                return {
+                    currentPlayer
+                }
+
+            })()
+
+            // ===== GAMEBOARD =====
+            const gameBoard = (() => {
+                let gameBoardArray = new Array(9).fill("")
+                let container = document.getElementsByClassName("container")[0]
+
+                const addMark = (e) => {
+                    let div = e.target
+                    if(div.innerText != "") return
+                    // let mark
+                    // if(currentPlayer == player1) mark = player1.playerMark
+                    // else player2.playerMark
+
+                    gameBoardArray[div.getAttribute("index")] = "x"
+                    div.setAttribute("mark", "x")
+                    div.innerText = "x"
+
+                    console.table(gameBoardArray)
+                }
+
+                const renderGameboard = () => {
+                    gameBoardArray.forEach(function(element, index) {
+                        let div = document.createElement("div")
+
+                        div.style.width = "100px"
+                        div.style.height = "100px"
+                        div.style.background = "blue"
+                        div.style.border = "1px solid black"
+                        div.classList.add("tile")
+
+                        div.setAttribute("index", index)
+                        div.setAttribute("mark", element)
+                        div.addEventListener('click', addMark)
+                        div.innerText = element
+
+                        container.appendChild(div)
+                    })
+                }
+
+                const checkGameboard = () => {
+
+                }
+
+                return {
+                    renderGameboard
+                }
+                })()
+
+                gameBoard.renderGameboard()
+                let player1 = Player("Benedict", "X")
+                let player2 = Player("Alistair", "O")
+
+        </script>
+    </body>
+</html>
