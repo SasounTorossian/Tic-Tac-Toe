@@ -10,14 +10,17 @@ body {
     height: 100%;
     width: 100%;
     min-height: 100vh;
-    grid-template-rows: 60px auto 60px;
+    grid-template-rows: 60px 60px auto 60px;
     grid-template-areas: 
     "header"
+    "gameInfo"
     "container"
     "footer";
 }
 
 .header {grid-area: header;}
+
+.gameInfo {grid-area: gameInfo;}
 
 .container {grid-area: container;}
 
@@ -32,6 +35,13 @@ body {
     margin: auto;
     grid-template-rows: 100px 100px 100px;
     grid-template-columns: 100px 100px 100px;
+}
+
+.tile {
+    width: 100px;
+    height: 100px;
+    background: orange;
+    border: 1px solid black;
 }
 
 /* FOOTER */

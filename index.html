@@ -13,6 +13,10 @@
             <h1 class="projectTitle">Tic-Tac-Toe</h1>
         </div>
 
+        <div class="gameInfo">
+            <p></p>
+        </div>
+
         <div class="container" >
         </div>
 
@@ -25,25 +29,43 @@
         <script>
             // ===== PLAYER =====
             const Player = (name, mark) => {
+                let playerName = name
                 let playerMark = mark
-                const testEcho = () => console.log(`i am player ${name} and my mark is ${mark}`)
 
                 return {
-                    playerMark,
-                    testEcho
+                    playerName,
+                    playerMark
                 }
             }
 
             // ===== GAMEENGINE =====
             const gameEngine = (() => {
-                let currentPlayer = ""
+                let players = []
+                let currentPlayer
+
+                const addPlayers = (p1, p2) => {
+                    players.push(p1)
+                    players.push(p2)
+                    assignPlayers()
+                }
+
+                const assignPlayers = () => {
+                    currentPlayer = players[0]
+                }
 
                 const switchPlayer = () => {
-                    
+                    currentPlayer = currentPlayer == players[0] ? 
+                                    players[1] : players[0]
+                }
+
+                function getCurrentPlayer() {
+                    return currentPlayer
                 }
 
                 return {
-                    currentPlayer
+                    addPlayers,
+                    switchPlayer,
+                    getCurrentPlayer
                 }
 
             })()
@@ -51,37 +73,40 @@
             // ===== GAMEBOARD =====
             const gameBoard = (() => {
                 let gameBoardArray = new Array(9).fill("")
+                const winningCombos = [["1", "2", "3"],
+                                        ["4", "5", "6"],
+                                        ["7", "8", "9"],
+                                        ["1", "4", "7"],
+                                        ["2", "5", "8"],
+                                        ["3", "6", "9"],
+                                        ["1", "5", "9"],
+                                        ["3", "5", "7"]]
+
                 let container = document.getElementsByClassName("container")[0]
 
                 const addMark = (e) => {
                     let div = e.target
                     if(div.innerText != "") return
-                    // let mark
-                    // if(currentPlayer == player1) mark = player1.playerMark
-                    // else player2.playerMark
 
-                    gameBoardArray[div.getAttribute("index")] = "x"
-                    div.setAttribute("mark", "x")
-                    div.innerText = "x"
+                    let mark = gameEngine.getCurrentPlayer() == player1 ?
+                    player1.playerMark : player2.playerMark
 
-                    console.table(gameBoardArray)
+                    gameBoardArray[div.getAttribute("index")] = mark
+                    div.setAttribute("mark", mark)
+                    div.innerText = mark
+
+                    gameEngine.switchPlayer()             
                 }
 
                 const renderGameboard = () => {
                     gameBoardArray.forEach(function(element, index) {
                         let div = document.createElement("div")
-
-                        div.style.width = "100px"
-                        div.style.height = "100px"
-                        div.style.background = "blue"
-                        div.style.border = "1px solid black"
                         div.classList.add("tile")
-
                         div.setAttribute("index", index)
                         div.setAttribute("mark", element)
                         div.addEventListener('click', addMark)
-                        div.innerText = element
 
+                        div.innerText = element
                         container.appendChild(div)
                     })
                 }
@@ -90,14 +115,20 @@
 
                 }
 
+                const isGameboardFull = () => {
+                    return gameBoardArray.indexOf("") == -1 ? true : false
+                }
+
                 return {
                     renderGameboard
                 }
                 })()
 
-                gameBoard.renderGameboard()
                 let player1 = Player("Benedict", "X")
                 let player2 = Player("Alistair", "O")
+
+                gameEngine.addPlayers(player1, player2)
+                gameBoard.renderGameboard()
 
         </script>
     </body>
