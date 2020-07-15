@@ -72,6 +72,7 @@
 
             // ===== GAMEBOARD =====
             const gameBoard = (() => {
+                let container = document.getElementsByClassName("container")[0]
                 let gameBoardArray = new Array(9).fill("")
                 const winningCombos = [["0", "1", "2"],
                                         ["3", "4", "5"],
@@ -82,8 +83,6 @@
                                         ["0", "4", "8"],
                                         ["2", "4", "6"]]
 
-                let container = document.getElementsByClassName("container")[0]
-
                 const addMark = (e) => {
                     let div = e.target
                     if(div.innerText != "") return
@@ -92,12 +91,11 @@
                     player1.playerMark : player2.playerMark
 
                     gameBoardArray[div.getAttribute("index")] = mark
-                    div.setAttribute("mark", mark)
                     div.innerText = mark
 
                     gameEngine.switchPlayer()
                     console.log(isGameboardFull())    
-                    console.log(checkGameboard())   
+                    console.log(isGameboardWin())   
                       
                 }
 
@@ -106,7 +104,6 @@
                         let div = document.createElement("div")
                         div.classList.add("tile")
                         div.setAttribute("index", index)
-                        div.setAttribute("mark", element)
                         div.addEventListener('click', addMark)
 
                         div.innerText = element
@@ -114,16 +111,12 @@
                     })
                 }
 
-                const checkGameboard = () => {
-                    return winningCombos.some(arr => {
-                                    let returnVal
+                const isGameboardWin = () => {
+                    let player1Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == "X"))
+                    let player2Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == "O"))
 
-                                    returnVal = arr.every(ar => gameBoardArray[ar] == "X")
-                                    if (returnVal) return true
-
-                                    returnVal = arr.every(ar => gameBoardArray[ar] == "O")
-                                    if (returnVal) return true
-                            })
+                    if (!player1Win && !player2Win) return false
+                    return player1Win ? 1 : 2
                 }
 
                 const isGameboardFull = () => {
