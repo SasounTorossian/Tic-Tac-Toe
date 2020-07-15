@@ -43,27 +43,28 @@
                 let players = []
                 let currentPlayer
 
+                const startGame = (player1, player2) => {
+                    addPlayers(player1, player2)
+                    gameBoard.renderGameboard()
+                }
+
                 const addPlayers = (p1, p2) => {
                     players.push(p1)
                     players.push(p2)
                     assignPlayers()
                 }
 
-                const assignPlayers = () => {
-                    currentPlayer = players[0]
-                }
+                const assignPlayers = () => currentPlayer = players[0]
 
                 const switchPlayer = () => {
                     currentPlayer = currentPlayer == players[0] ? 
                                     players[1] : players[0]
                 }
 
-                function getCurrentPlayer() {
-                    return currentPlayer
-                }
+                const getCurrentPlayer = () => currentPlayer
 
                 return {
-                    addPlayers,
+                    startGame,
                     switchPlayer,
                     getCurrentPlayer
                 }
@@ -85,12 +86,13 @@
 
                 const addMark = (e) => {
                     let div = e.target
+                    let index = div.getAttribute("index")
                     if(div.innerText != "") return
 
                     let mark = gameEngine.getCurrentPlayer() == player1 ?
                     player1.playerMark : player2.playerMark
 
-                    gameBoardArray[div.getAttribute("index")] = mark
+                    gameBoardArray[index] = mark
                     div.innerText = mark
 
                     gameEngine.switchPlayer()
@@ -130,9 +132,7 @@
 
                 let player1 = Player("Benedict", "X")
                 let player2 = Player("Alistair", "O")
-
-                gameEngine.addPlayers(player1, player2)
-                gameBoard.renderGameboard()
+                gameEngine.startGame(player1, player2)
 
         </script>
     </body>
