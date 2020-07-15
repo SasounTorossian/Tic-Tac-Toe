@@ -73,14 +73,14 @@
             // ===== GAMEBOARD =====
             const gameBoard = (() => {
                 let gameBoardArray = new Array(9).fill("")
-                const winningCombos = [["1", "2", "3"],
-                                        ["4", "5", "6"],
-                                        ["7", "8", "9"],
+                const winningCombos = [["0", "1", "2"],
+                                        ["3", "4", "5"],
+                                        ["6", "7", "8"],
+                                        ["0", "3", "6"],
                                         ["1", "4", "7"],
                                         ["2", "5", "8"],
-                                        ["3", "6", "9"],
-                                        ["1", "5", "9"],
-                                        ["3", "5", "7"]]
+                                        ["0", "4", "8"],
+                                        ["2", "4", "6"]]
 
                 let container = document.getElementsByClassName("container")[0]
 
@@ -95,7 +95,10 @@
                     div.setAttribute("mark", mark)
                     div.innerText = mark
 
-                    gameEngine.switchPlayer()             
+                    gameEngine.switchPlayer()
+                    console.log(isGameboardFull())    
+                    console.log(checkGameboard())   
+                      
                 }
 
                 const renderGameboard = () => {
@@ -112,7 +115,15 @@
                 }
 
                 const checkGameboard = () => {
+                    return winningCombos.some(arr => {
+                                    let returnVal
 
+                                    returnVal = arr.every(ar => gameBoardArray[ar] == "X")
+                                    if (returnVal) return true
+
+                                    returnVal = arr.every(ar => gameBoardArray[ar] == "O")
+                                    if (returnVal) return true
+                            })
                 }
 
                 const isGameboardFull = () => {
