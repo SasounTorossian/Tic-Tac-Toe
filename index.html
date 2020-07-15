@@ -48,7 +48,7 @@
                 const startGame = (player1, player2) => {
                     addPlayers(player1, player2)
                     gameBoard.startGameBoard()
-                    gameInfoWrite(`Current player is ${getCurrentPlayerName()}`)
+                    gameInfoWrite(`Current player is ${getCurrentPlayer().playerName}`)
                     gameEnd = false
                 }
 
@@ -62,11 +62,11 @@
 
                 const switchPlayer = () => {
                     currentPlayer = (currentPlayer == players[0]) ? players[1] : players[0]
-                    gameInfoWrite(`Current player is ${getCurrentPlayerName()}`)
+                    gameInfoWrite(`Current player is ${getCurrentPlayer().playerName}`)
                 }
 
                 const winningScenario = () => {
-                    gameInfoWrite(`Congrats, ${getCurrentPlayerName()} won`)
+                    gameInfoWrite(`Congrats, ${getCurrentPlayer().playerName} won`)
                     gameEnd = true
                     //RESET CODE HERE
                 }
@@ -77,23 +77,19 @@
                     //RESET CODE HERE
                 }
 
-                const getPlayer = (i) => players[i]
+                const getPlayers = () => players
 
-                const getCurrentPlayerName = () => currentPlayer.playerName
-                
-                const getCurrentPlayerMark = () => currentPlayer.playerMark
+                const getCurrentPlayer = () => currentPlayer
 
                 const gameInfoWrite = (string) => gameInfo.innerText = string
 
                 const isGameOver = () => gameEnd
-                
 
                 return {
                     startGame,
                     switchPlayer,
-                    getPlayer,
-                    getCurrentPlayerName,
-                    getCurrentPlayerMark,
+                    getPlayers,
+                    getCurrentPlayer,
                     winningScenario,
                     tieScenario,
                     isGameOver
@@ -125,7 +121,7 @@
                     if(gameEngine.isGameOver()) return
                     if(div.innerText != "") return
 
-                    let mark = gameEngine.getCurrentPlayerMark()
+                    let mark = gameEngine.getCurrentPlayer().playerMark
                     gameBoardArray[index] = mark
                     div.innerText = mark
                     
@@ -149,8 +145,8 @@
                 }
 
                 const checkGameboardWin = () => {
-                    let player1Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == gameEngine.getPlayer(0).playerMark))
-                    let player2Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == gameEngine.getPlayer(1).playerMark))
+                    let player1Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == gameEngine.getPlayers()[0].playerMark))
+                    let player2Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == gameEngine.getPlayers()[1].playerMark))
                     if (player1Win || player2Win) return true
                 }
 
