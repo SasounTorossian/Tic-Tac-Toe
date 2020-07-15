@@ -40,12 +40,16 @@
 
             // ===== GAME ENGINE =====
             const gameEngine = (() => {
+                let gameInfo = document.getElementsByClassName("gameInfo")[0]
+                let gameEnd = false
                 let players = []
                 let currentPlayer
 
                 const startGame = (player1, player2) => {
                     addPlayers(player1, player2)
                     gameBoard.startGameBoard()
+                    gameInfoWrite(`Current player is ${getCurrentPlayerName()}`)
+                    gameEnd = false
                 }
 
                 const addPlayers = (p1, p2) => {
@@ -56,14 +60,43 @@
 
                 const assignPlayers = () => currentPlayer = players[0]
 
-                const switchPlayer = () => currentPlayer = (currentPlayer == players[0]) ? players[1] : players[0]
+                const switchPlayer = () => {
+                    currentPlayer = (currentPlayer == players[0]) ? players[1] : players[0]
+                    gameInfoWrite(`Current player is ${getCurrentPlayerName()}`)
+                }
 
-                const getCurrentPlayer = () => currentPlayer
+                const winningScenario = () => {
+                    gameInfoWrite(`Congrats, ${getCurrentPlayerName()} won`)
+                    gameEnd = true
+                    //RESET CODE HERE
+                }
+
+                const tieScenario = () => {
+                    gameInfoWrite(`It's a tie.`)
+                    gameEnd = true
+                    //RESET CODE HERE
+                }
+
+                const getPlayer = (i) => players[i]
+
+                const getCurrentPlayerName = () => currentPlayer.playerName
+                
+                const getCurrentPlayerMark = () => currentPlayer.playerMark
+
+                const gameInfoWrite = (string) => gameInfo.innerText = string
+
+                const isGameOver = () => gameEnd
+                
 
                 return {
                     startGame,
                     switchPlayer,
-                    getCurrentPlayer
+                    getPlayer,
+                    getCurrentPlayerName,
+                    getCurrentPlayerMark,
+                    winningScenario,
+                    tieScenario,
+                    isGameOver
                 }
 
             })()
@@ -71,7 +104,6 @@
             // ===== GAME BOARD =====
             const gameBoard = (() => {
                 let container = document.getElementsByClassName("container")[0]
-                let gameInfo = document.getElementsByClassName("gameInfo")[0]
 
                 let gameBoardArray = new Array(9).fill("")
                 const winningCombos = [["0", "1", "2"],
@@ -90,18 +122,14 @@
                 const addMark = (e) => {
                     let div = e.target
                     let index = div.getAttribute("index")
+                    if(gameEngine.isGameOver()) return
                     if(div.innerText != "") return
 
-                    let mark = gameEngine.getCurrentPlayer().playerMark
-
+                    let mark = gameEngine.getCurrentPlayerMark()
                     gameBoardArray[index] = mark
                     div.innerText = mark
-
-                    gameEngine.switchPlayer()
-
-                    CheckGameboardTie()  
-                    CheckGameboardWin() 
-                      
+                    
+                    checkGameboard()           
                 }
 
                 const renderGameboard = () => {
@@ -110,39 +138,33 @@
                         div.classList.add("tile")
                         div.setAttribute("index", index)
                         div.addEventListener('click', addMark)
-
                         container.appendChild(div)
                     })
                 }
 
-                const CheckGameboardWin = () => {
-                    let player1Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == "X"))
-                    let player2Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == "O"))
-
-                    if (player1Win || player2Win) winningScenario(player1Win ? 1 : 2)
+                const checkGameboard = () => {
+                    if(checkGameboardWin()) gameEngine.winningScenario()
+                    else if(checkGameboardTie()) gameEngine.tieScenario()
+                    else gameEngine.switchPlayer()
                 }
 
-                const CheckGameboardTie = () => {
-                    if(gameBoardArray.indexOf("") == -1) tieScenario()
+                const checkGameboardWin = () => {
+                    let player1Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == gameEngine.getPlayer(0).playerMark))
+                    let player2Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == gameEngine.getPlayer(1).playerMark))
+                    if (player1Win || player2Win) return true
                 }
 
-                const winningScenario = (winner) => {
-                    gameInfo.innerText = `Congrats, player${winner} won`
-                    //RESET CODE HERE
-                }
-
-                const tieScenario = () => {
-                    gameInfo.innerText = `It's a tie.`
-                    //RESET CODE HERE
-                }
+                const checkGameboardTie = () => {
+                    if(gameBoardArray.indexOf("") == -1) return true
+                }                
 
                 return {
                     startGameBoard
                 }
                 })()
 
-                let player1 = Player("Benedict", "X")
-                let player2 = Player("Alistair", "O")
+                let player1 = Player("Shrek", "X")
+                let player2 = Player("Your Mother", "O")
                 gameEngine.startGame(player1, player2)
 
         </script>
