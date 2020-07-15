@@ -38,14 +38,14 @@
                 }
             }
 
-            // ===== GAMEENGINE =====
+            // ===== GAME ENGINE =====
             const gameEngine = (() => {
                 let players = []
                 let currentPlayer
 
                 const startGame = (player1, player2) => {
                     addPlayers(player1, player2)
-                    gameBoard.renderGameboard()
+                    gameBoard.startGameBoard()
                 }
 
                 const addPlayers = (p1, p2) => {
@@ -56,10 +56,7 @@
 
                 const assignPlayers = () => currentPlayer = players[0]
 
-                const switchPlayer = () => {
-                    currentPlayer = currentPlayer == players[0] ? 
-                                    players[1] : players[0]
-                }
+                const switchPlayer = () => currentPlayer = (currentPlayer == players[0]) ? players[1] : players[0]
 
                 const getCurrentPlayer = () => currentPlayer
 
@@ -71,9 +68,11 @@
 
             })()
 
-            // ===== GAMEBOARD =====
+            // ===== GAME BOARD =====
             const gameBoard = (() => {
                 let container = document.getElementsByClassName("container")[0]
+                let gameInfo = document.getElementsByClassName("gameInfo")[0]
+
                 let gameBoardArray = new Array(9).fill("")
                 const winningCombos = [["0", "1", "2"],
                                         ["3", "4", "5"],
@@ -84,20 +83,24 @@
                                         ["0", "4", "8"],
                                         ["2", "4", "6"]]
 
+                const startGameBoard = () => {
+                    renderGameboard()
+                }
+
                 const addMark = (e) => {
                     let div = e.target
                     let index = div.getAttribute("index")
                     if(div.innerText != "") return
 
-                    let mark = gameEngine.getCurrentPlayer() == player1 ?
-                    player1.playerMark : player2.playerMark
+                    let mark = gameEngine.getCurrentPlayer().playerMark
 
                     gameBoardArray[index] = mark
                     div.innerText = mark
 
                     gameEngine.switchPlayer()
-                    console.log(isGameboardFull())    
-                    console.log(isGameboardWin())   
+
+                    CheckGameboardTie()  
+                    CheckGameboardWin() 
                       
                 }
 
@@ -108,25 +111,33 @@
                         div.setAttribute("index", index)
                         div.addEventListener('click', addMark)
 
-                        div.innerText = element
                         container.appendChild(div)
                     })
                 }
 
-                const isGameboardWin = () => {
+                const CheckGameboardWin = () => {
                     let player1Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == "X"))
                     let player2Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == "O"))
 
-                    if (!player1Win && !player2Win) return false
-                    return player1Win ? 1 : 2
+                    if (player1Win || player2Win) winningScenario(player1Win ? 1 : 2)
                 }
 
-                const isGameboardFull = () => {
-                    return gameBoardArray.indexOf("") == -1 ? true : false
+                const CheckGameboardTie = () => {
+                    if(gameBoardArray.indexOf("") == -1) tieScenario()
+                }
+
+                const winningScenario = (winner) => {
+                    gameInfo.innerText = `Congrats, player${winner} won`
+                    //RESET CODE HERE
+                }
+
+                const tieScenario = () => {
+                    gameInfo.innerText = `It's a tie.`
+                    //RESET CODE HERE
                 }
 
                 return {
-                    renderGameboard
+                    startGameBoard
                 }
                 })()
 
