@@ -38,6 +38,87 @@
                 }
             }
 
+            // ===== AI =====
+            const AI = (name, mark) => {
+                let playerName = name
+                let playerMark = mark
+
+                const AiPlay = (gameBoardArray) => {
+                    let bestScore = -Infinity
+                    let bestMove
+                    for(let i = 0; i < gameBoardArray.length; i++) {
+                        if(gameBoardArray[i] == "") {
+                            console.log(gameBoardArray)
+                            gameBoardArray[i] = "O"
+                            let score = minimax(gameBoardArray, 0, false)
+                            gameBoardArray[i] = ""
+                            console.log(score)
+                            // console.log(score)
+                            if (score > bestScore) {
+                                bestScore = score
+                                bestMove = i
+                            }
+                        }
+                    }
+
+                    let mark = gameEngine.getCurrentPlayer().playerMark
+                    gameBoardArray[bestMove] = playerMark
+                    let div = document.querySelector(`[index="${bestMove}"]`);
+                    div.innerText = mark
+                    gameBoard.checkGameboard()  
+                }
+
+                let scores = {
+                    "O": 10,
+                    "X": -10,
+                    "TIE": 0
+                }
+
+                const minimax = (gameBoardArrayAi, depth, isMaximising) => {
+                    // Pass gameboard to checkGameboardWin()?
+                    let result = gameBoard.checkGameboardWin()
+                    if (result !== null) {
+                        // console.log(`depth: ${depth}, score: ${scores[result]}`)
+                        return scores[result]
+                    }
+                    
+                    // AI's turn
+                    if(isMaximising) {
+                        let maxScore = -Infinity
+                        for(let i = 0; i < gameBoardArrayAi.length; i++) {
+                            if(gameBoardArrayAi[i] == "") {
+                                gameBoardArrayAi[i] = "O"
+                                // console.log(`MAXI depth: ${depth}, ${gameBoardArrayAi}`)
+                                let score = minimax(gameBoardArrayAi, depth + 1, false)
+                                gameBoardArrayAi[i] = ""
+                                maxScore = Math.max(score, maxScore)
+                            }
+                        }
+                        return maxScore - depth
+                    }
+                    else {
+                        let minScore = Infinity
+                        for(let i = 0; i < gameBoardArrayAi.length; i++) {
+                            if(gameBoardArrayAi[i] == "") {
+                                gameBoardArrayAi[i] = "X"
+                                // console.log(`MINI depth: ${depth}, ${gameBoardArrayAi}`)
+                                let score = minimax(gameBoardArrayAi, depth + 1, true)
+                                gameBoardArrayAi[i] = ""
+                                minScore = Math.min(score, minScore)
+                            }
+                        }
+                        return minScore + depth
+                    }
+                }
+
+                return {
+                    playerName,
+                    playerMark,
+                    AiPlay
+                }
+
+            }
+
             // ===== GAME ENGINE =====
             const gameEngine = (() => {
                 let gameInfo = document.getElementsByClassName("gameInfo")[0]
@@ -59,6 +140,12 @@
                 }
 
                 const assignPlayers = () => currentPlayer = players[0]
+
+                const nextTurn = (gameBoard) => {
+                    switchPlayer()
+                    // AND AI game mode for PvP or PvAI game modes
+                    if (currentPlayer == players[1]) currentPlayer.AiPlay(gameBoard)
+                }
 
                 const switchPlayer = () => {
                     currentPlayer = (currentPlayer == players[0]) ? players[1] : players[0]
@@ -92,7 +179,8 @@
                     getCurrentPlayer,
                     winningScenario,
                     tieScenario,
-                    isGameOver
+                    isGameOver,
+                    nextTurn
                 }
 
             })()
@@ -118,6 +206,7 @@
                 const addMark = (e) => {
                     let div = e.target
                     let index = div.getAttribute("index")
+
                     if(gameEngine.isGameOver()) return
                     if(div.innerText != "") return
 
@@ -139,28 +228,42 @@
                 }
 
                 const checkGameboard = () => {
-                    if(checkGameboardWin()) gameEngine.winningScenario()
-                    else if(checkGameboardTie()) gameEngine.tieScenario()
-                    else gameEngine.switchPlayer()
+                    let gameBoardArraynew
+                    if(checkGameboardWin() == "X" || 
+                    checkGameboardWin() == "O") gameEngine.winningScenario()
+                    else if(checkGameboardTie(gameBoardArray) == "TIE") gameEngine.tieScenario()
+                    else {
+                        gameEngine.nextTurn(gameBoardArray)
+                        // gameBoardArraynew = gameEngine.nextTurn(gameBoardArray)
+                        // if (gameBoardArraynew != null) {
+                        //     gameBoardArray.splice(0, gameBoardArray.length, ...gameBoardArraynew)
+                        }
                 }
 
                 const checkGameboardWin = () => {
                     let player1Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == gameEngine.getPlayers()[0].playerMark))
                     let player2Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == gameEngine.getPlayers()[1].playerMark))
-                    if (player1Win || player2Win) return true
+
+                    if (player1Win) return "X"
+                    if (player2Win) return "O"
+                    if(gameBoardArray.indexOf("") == -1) return "TIE"
+                    return null
                 }
 
                 const checkGameboardTie = () => {
-                    if(gameBoardArray.indexOf("") == -1) return true
+                    if(gameBoardArray.indexOf("") == -1) return "TIE"
                 }                
 
                 return {
-                    startGameBoard
+                    startGameBoard,
+                    checkGameboard,
+                    checkGameboardWin
                 }
                 })()
 
                 let player1 = Player("Shrek", "X")
-                let player2 = Player("Your Mother", "O")
+                // let player2 = Player("Your Mother", "O")
+                let player2 = AI("HAL9000", "O")
                 gameEngine.startGame(player1, player2)
 
         </script>
