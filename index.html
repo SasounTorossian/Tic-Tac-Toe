@@ -49,7 +49,8 @@
                     for(let i = 0; i < gameBoardArray.length; i++) {
                         if(gameBoardArray[i] == "") {
                             gameBoardArray[i] = "O"
-                            let score = minimax(gameBoardArray, 0, -Infinity, Infinity, false)
+                            // let score = minimaxAlphaBeta(gameBoardArray, 3, -Infinity, Infinity, false)
+                            let score = minimax(gameBoardArray, 1, false)
                             gameBoardArray[i] = ""
                             if (score > bestScore) {
                                 bestScore = score
@@ -71,12 +72,62 @@
                     "TIE": 0
                 }
 
-                const minimax = (gameBoardArrayAi, depth, alpha, beta, isMaximising) => {
+
+                const minimaxAlphaBeta = (gameBoardArrayAi, depth, alpha, beta, isMaximising) => {
                     // Pass gameboard to checkGameboardWin()?
                     let result = gameBoard.checkGameboardWin()
                     if (result !== null) {
                         // console.log(`depth: ${depth}, score: ${scores[result]}`)
                         return scores[result]
+                    }
+                    if (depth == 0) {
+                        return 0
+                    }
+                    
+                    // AI's turn
+                    if(isMaximising) {
+                        let maxScore = -Infinity
+                        for(let i = 0; i < gameBoardArrayAi.length; i++) {
+                            if(gameBoardArrayAi[i] == "") {
+                                gameBoardArrayAi[i] = "O"
+                                let score = minimaxAlphaBeta(gameBoardArrayAi, depth - 1, alpha, beta, false)
+                                gameBoardArrayAi[i] = ""
+                                maxScore = Math.max(score, maxScore)
+                                alpha = Math.max(alpha, score)
+                                if(beta <= alpha) {
+                                    break
+                                }
+                            }
+                        }
+                        return maxScore + depth
+                    }
+                    else {
+                        let minScore = Infinity
+                        for(let i = 0; i < gameBoardArrayAi.length; i++) {
+                            if(gameBoardArrayAi[i] == "") {
+                                gameBoardArrayAi[i] = "X"
+                                let score = minimaxAlphaBeta(gameBoardArrayAi, depth - 1, alpha, beta, true)
+                                gameBoardArrayAi[i] = ""
+                                minScore = Math.min(score, minScore)
+                                beta = Math.min(beta, score)
+                                if(beta <= alpha) {
+                                    break
+                                }
+                            }
+                        }
+                        return minScore - depth
+                    }
+                }
+
+
+                const minimax = (gameBoardArrayAi, depth, isMaximising) => {
+                    // Pass gameboard to checkGameboardWin()?
+                    let result = gameBoard.checkGameboardWin()
+                    if (result !== null) {
+                        return scores[result]
+                    }
+                    if (depth == 0) {
+                        return 0
                     }
                     
                     // AI's turn
@@ -86,16 +137,12 @@
                             if(gameBoardArrayAi[i] == "") {
                                 gameBoardArrayAi[i] = "O"
                                 // console.log(`MAXI depth: ${depth}, ${gameBoardArrayAi}`)
-                                let score = minimax(gameBoardArrayAi, depth + 1, alpha, beta, false)
+                                let score = minimax(gameBoardArrayAi, depth - 1, false)
                                 gameBoardArrayAi[i] = ""
                                 maxScore = Math.max(score, maxScore)
-                                alpha = Math.max(alpha, score)
-                                if(beta <= alpha) {
-                                    break
-                                }
                             }
                         }
-                        return maxScore - depth
+                        return maxScore + depth
                     }
                     else {
                         let minScore = Infinity
@@ -103,16 +150,12 @@
                             if(gameBoardArrayAi[i] == "") {
                                 gameBoardArrayAi[i] = "X"
                                 // console.log(`MINI depth: ${depth}, ${gameBoardArrayAi}`)
-                                let score = minimax(gameBoardArrayAi, depth + 1, alpha, beta, true)
+                                let score = minimax(gameBoardArrayAi, depth - 1, true)
                                 gameBoardArrayAi[i] = ""
                                 minScore = Math.min(score, minScore)
-                                beta = Math.min(beta, score)
-                                if(beta <= alpha) {
-                                    break
-                                }
                             }
                         }
-                        return minScore + depth
+                        return minScore - depth
                     }
                 }
 
@@ -148,13 +191,13 @@
 
                 const nextTurn = (gameBoard) => {
                     switchPlayer()
+                    gameInfoWrite(`Current player is ${getCurrentPlayer().playerName}`)
                     // AND AI game mode for PvP or PvAI game modes
                     if (currentPlayer == players[1]) currentPlayer.AiPlay(gameBoard)
                 }
 
                 const switchPlayer = () => {
                     currentPlayer = (currentPlayer == players[0]) ? players[1] : players[0]
-                    gameInfoWrite(`Current player is ${getCurrentPlayer().playerName}`)
                 }
 
                 const winningScenario = () => {
@@ -233,16 +276,10 @@
                 }
 
                 const checkGameboard = () => {
-                    let gameBoardArraynew
                     if(checkGameboardWin() == "X" || 
                     checkGameboardWin() == "O") gameEngine.winningScenario()
                     else if(checkGameboardTie(gameBoardArray) == "TIE") gameEngine.tieScenario()
-                    else {
-                        gameEngine.nextTurn(gameBoardArray)
-                        // gameBoardArraynew = gameEngine.nextTurn(gameBoardArray)
-                        // if (gameBoardArraynew != null) {
-                        //     gameBoardArray.splice(0, gameBoardArray.length, ...gameBoardArraynew)
-                        }
+                    else gameEngine.nextTurn(gameBoardArray)
                 }
 
                 const checkGameboardWin = () => {
@@ -257,6 +294,7 @@
 
                 const checkGameboardTie = () => {
                     if(gameBoardArray.indexOf("") == -1) return "TIE"
+                    return null
                 }                
 
                 return {
