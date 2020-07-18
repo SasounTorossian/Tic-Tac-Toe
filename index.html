@@ -45,13 +45,19 @@
 
                 const AiPlay = (gameBoardArray) => {
                     let bestScore = -Infinity
+                    let score
                     let bestMove
+                    let AlphaBeta = true
+                    let searchDepth = 9 //1 = Dumb, 4 = Moderate, 9 = Perfect
+                    let isMaximising = false
+
                     for(let i = 0; i < gameBoardArray.length; i++) {
                         if(gameBoardArray[i] == "") {
                             gameBoardArray[i] = "O"
-                            // let score = minimaxAlphaBeta(gameBoardArray, 3, -Infinity, Infinity, false)
-                            let score = minimax(gameBoardArray, 1, false)
+                            if (AlphaBeta) score = minimax(gameBoardArray, searchDepth, isMaximising, -Infinity, Infinity)
+                            else score = minimax(gameBoardArray, searchDepth, isMaximising)
                             gameBoardArray[i] = ""
+
                             if (score > bestScore) {
                                 bestScore = score
                                 bestMove = i
@@ -72,87 +78,46 @@
                     "TIE": 0
                 }
 
-
-                const minimaxAlphaBeta = (gameBoardArrayAi, depth, alpha, beta, isMaximising) => {
+                const minimax = (gameBoardArray, depth, isMaximising, alpha, beta) => {
+                    
                     // Pass gameboard to checkGameboardWin()?
                     let result = gameBoard.checkGameboardWin()
-                    if (result !== null) {
-                        // console.log(`depth: ${depth}, score: ${scores[result]}`)
-                        return scores[result]
-                    }
-                    if (depth == 0) {
-                        return 0
-                    }
+                    if (result !== null) return scores[result]
+                    if (depth == 0) scores["TIE"]
                     
                     // AI's turn
                     if(isMaximising) {
                         let maxScore = -Infinity
-                        for(let i = 0; i < gameBoardArrayAi.length; i++) {
-                            if(gameBoardArrayAi[i] == "") {
-                                gameBoardArrayAi[i] = "O"
-                                let score = minimaxAlphaBeta(gameBoardArrayAi, depth - 1, alpha, beta, false)
-                                gameBoardArrayAi[i] = ""
-                                maxScore = Math.max(score, maxScore)
-                                alpha = Math.max(alpha, score)
-                                if(beta <= alpha) {
-                                    break
-                                }
-                            }
-                        }
-                        return maxScore + depth
-                    }
-                    else {
-                        let minScore = Infinity
-                        for(let i = 0; i < gameBoardArrayAi.length; i++) {
-                            if(gameBoardArrayAi[i] == "") {
-                                gameBoardArrayAi[i] = "X"
-                                let score = minimaxAlphaBeta(gameBoardArrayAi, depth - 1, alpha, beta, true)
-                                gameBoardArrayAi[i] = ""
-                                minScore = Math.min(score, minScore)
-                                beta = Math.min(beta, score)
-                                if(beta <= alpha) {
-                                    break
-                                }
-                            }
-                        }
-                        return minScore - depth
-                    }
-                }
-
-
-                const minimax = (gameBoardArrayAi, depth, isMaximising) => {
-                    // Pass gameboard to checkGameboardWin()?
-                    let result = gameBoard.checkGameboardWin()
-                    if (result !== null) {
-                        return scores[result]
-                    }
-                    if (depth == 0) {
-                        return 0
-                    }
-                    
-                    // AI's turn
-                    if(isMaximising) {
-                        let maxScore = -Infinity
-                        for(let i = 0; i < gameBoardArrayAi.length; i++) {
-                            if(gameBoardArrayAi[i] == "") {
-                                gameBoardArrayAi[i] = "O"
+                        for(let i = 0; i < gameBoardArray.length; i++) {
+                            if(gameBoardArray[i] == "") {
+                                gameBoardArray[i] = "O"
                                 // console.log(`MAXI depth: ${depth}, ${gameBoardArrayAi}`)
-                                let score = minimax(gameBoardArrayAi, depth - 1, false)
-                                gameBoardArrayAi[i] = ""
+                                let score = minimax(gameBoardArray, depth - 1, !isMaximising, alpha, beta)
+                                gameBoardArray[i] = ""
                                 maxScore = Math.max(score, maxScore)
+
+                                if(alpha !== undefined && beta !== undefined) {
+                                    alpha = Math.max(alpha, score)
+                                    if(beta <= alpha) break
+                                }
                             }
                         }
                         return maxScore + depth
                     }
                     else {
                         let minScore = Infinity
-                        for(let i = 0; i < gameBoardArrayAi.length; i++) {
-                            if(gameBoardArrayAi[i] == "") {
-                                gameBoardArrayAi[i] = "X"
+                        for(let i = 0; i < gameBoardArray.length; i++) {
+                            if(gameBoardArray[i] == "") {
+                                gameBoardArray[i] = "X"
                                 // console.log(`MINI depth: ${depth}, ${gameBoardArrayAi}`)
-                                let score = minimax(gameBoardArrayAi, depth - 1, true)
-                                gameBoardArrayAi[i] = ""
+                                let score = minimax(gameBoardArray, depth - 1, !isMaximising, alpha, beta)
+                                gameBoardArray[i] = ""
                                 minScore = Math.min(score, minScore)
+
+                                if(alpha !== undefined && beta !== undefined) {
+                                    beta = Math.min(beta, score)
+                                    if(beta <= alpha) break
+                                }
                             }
                         }
                         return minScore - depth
@@ -266,10 +231,10 @@
                 }
 
                 const renderGameboard = () => {
-                    gameBoardArray.forEach(function(element, index) {
+                    gameBoardArray.forEach(function(elem, idx) {
                         let div = document.createElement("div")
                         div.classList.add("tile")
-                        div.setAttribute("index", index)
+                        div.setAttribute("index", idx)
                         div.addEventListener('click', addMark)
                         container.appendChild(div)
                     })
