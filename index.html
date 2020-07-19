@@ -46,13 +46,13 @@
                 const AiPlay = (gameBoardArray) => {
                     let bestScore = -Infinity
                     let bestMove
-                    let searchDepth = 9 //1 = Dumb, 4 = Moderate, 9 = Perfect
+                    let searchDepth = 9
                     let isMaximising = false
 
                     for(let i = 0; i < gameBoardArray.length; i++) {
                         if(gameBoardArray[i] == "") {
                             gameBoardArray[i] = "O"
-                            let score = minimax(gameBoardArray, searchDepth, -Infinity, Infinity, isMaximising)
+                            let score = minimax(gameBoardArray, searchDepth - 1, -Infinity, Infinity, isMaximising)
                             gameBoardArray[i] = ""
 
                             if (score > bestScore) {
@@ -75,6 +75,17 @@
                     "TIE": 0
                 }
 
+                // 0.1 - 0.2 = Dumb
+                // 0.5 - 0.6 = Normal
+                // 0.9 - 1.0 = Perfect
+                const getRandomDec = (a, b) => (Math.random() * (a - b) + b).toFixed(1)
+
+                const easyMode = () => getRandomDec(0.1, 0.2)
+
+                const MediumMode = () => getRandomDec(0.5, 0.6)
+
+                const HardMode = () => getRandomDec(0.9, 1.0)
+
                 const minimax = (gameBoardArray, depth, alpha, beta, isMaximising) => {
                     
                     // Pass gameboard to checkGameboardWin()?
@@ -91,7 +102,7 @@
                                 // console.log(`MAXI depth: ${depth}, ${gameBoardArrayAi}`)
                                 let score = minimax(gameBoardArray, depth - 1, alpha, beta, !isMaximising)
                                 gameBoardArray[i] = ""
-                                maxScore = Math.max(score, maxScore)
+                                maxScore = Math.max(score / HardMode(), maxScore)
                                 alpha = Math.max(alpha, score)
                                 if(beta <= alpha) break
                             }
@@ -106,7 +117,7 @@
                                 // console.log(`MINI depth: ${depth}, ${gameBoardArrayAi}`)
                                 let score = minimax(gameBoardArray, depth - 1, alpha, beta, !isMaximising)
                                 gameBoardArray[i] = ""
-                                minScore = Math.min(score, minScore)
+                                minScore = Math.min(score * HardMode(), minScore)
                                 beta = Math.min(beta, score)
                                 if(beta <= alpha) break
                         
@@ -114,10 +125,6 @@
                         }
                         return minScore - depth
                     }
-                }
-
-                function getRandomInt(max) {
-                    return Math.floor(Math.random() * Math.floor(max));
                 }
 
                 return {
