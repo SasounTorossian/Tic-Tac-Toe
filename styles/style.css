@@ -31,6 +31,10 @@ body {
 
 /* CONTAINER */
 .container {
+    margin: auto;
+}
+
+.game-board {
     display: grid;
     margin: auto;
     grid-template-rows: 100px 100px 100px;
@@ -42,6 +46,45 @@ body {
     height: 100px;
     background: orange;
     border: 1px solid black;
+}
+
+.start-screen {
+    width: 500px;
+    display: flex;
+    justify-content: space-evenly;
+    opacity: 1;
+}
+
+.start-tile {
+    border: 1px solid black;
+    width: 200px;
+    height: 200px;
+}
+
+.player-screen {
+    width: 500px;
+    display: flex;
+    justify-content: space-evenly;
+    opacity: 1;
+}
+
+.player-tile {
+    border: 1px solid black;
+    width: 200px;
+    height: 200px;
+}
+
+.screen-hidden {
+    display: none
+}
+
+.screen-transition.screen-hidden {
+    display: flex;
+    opacity: 0;
+}
+
+.screen-transition {
+    transition: opacity 1s ease;
 }
 
 /* FOOTER */

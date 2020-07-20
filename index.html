@@ -11,6 +11,7 @@
     <body>
         <div class="header">
             <h1 class="projectTitle">Tic-Tac-Toe</h1>
+            <button class="test-button">TEST</button>
         </div>
 
         <div class="gameInfo">
@@ -18,6 +19,57 @@
         </div>
 
         <div class="container" >
+            <div class="game-board"></div>
+            <div class="start-screen">
+                <div class="start-tile" id="PvP">
+                    <p>Player vs. Player</p>
+                </div>
+                <div class="start-tile" id="PvAi">
+                    <p>Player vs Ai</p>
+                </div>
+            </div>
+            <div class="player-screen">
+                <div class="player-tile" id="player-1">
+                    <p>Input Player Names</p>
+                    <form class="player-form">
+                        <div class="form-container">
+                            <label for="name" class="label-container" id="p1-name-label">Player 1 Name
+                              </label>
+                            <input type=text name="name" class="input-container" id="p1-name-input" autocomplete="off" required>
+                        </div>
+
+                        <div class="form-container">
+                            <label for="name" class="label-container" id="p2-name-label">Player 2 Name
+                              </label>
+                            <input type=text name="name" class="input-container" id="p2-name-input" autocomplete="off" required>
+                        </div>
+
+                        <!-- Need to add Ai Difficulty Settings -->
+
+                        <div class="submit-container" id="submit-form">
+                            <button type="submit" class="submit-button disable-select">Submit</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- <div class="player-tile" id="player-2">
+                    <p>Input Player 2 Name</p>
+                    <form class="player-form">
+                        <div class="form-container">
+                            <label for="name" class="label-container" id="name-label">
+                                Player 2 Name
+                            </label>
+                            <input type=text name="name" class="input-container" id="p2-name-input" autocomplete="off" required>
+                        </div>
+                        
+                        <div class="submit-container" id="submit-form">
+                            <button type="submit" class="p2-submit-button disable-select">Submit</button>
+                        </div>
+                    </form>
+                </div> -->
+                <!-- <div class="player-tile" id="ai">
+                    <p>Input Player 2 Name</p>
+                </div> -->
+            </div>
         </div>
 
         <div class="footer">
@@ -27,6 +79,110 @@
         </div>
 
         <script>
+
+            const optionMenus = (() => {      
+                // RESET OPTION
+                startScreenContainer = document.querySelectorAll(".start-tile")
+                playerScreenContainer = document.querySelectorAll(".player-tile")
+                startScreenContainerClass = document.querySelector(".start-screen")
+                playerScreenContainerClass = document.querySelector(".player-screen")
+                player2NameLabel = document.querySelector("#p2-name-label")
+                player2NameInput = document.querySelector("#p2-name-input")
+                submitBtn = document.querySelector(".submit-button")
+                // playerScreenContainerClass.classList.add("screen-hidden")
+
+                let gameMode
+                let player1Name
+                let player2Name
+
+                const submitPlayers = (e) => {
+                    e.preventDefault()
+                    player1Name = document.querySelector('#p1-name-input').value
+                    player2Name = document.querySelector('#p2-name-input').value
+                    if (!player1Name || !player2Name) return
+                    playerScreenShowHide()
+                }
+
+                submitBtn.addEventListener('click', submitPlayers)
+
+                
+                startScreenContainer.forEach(element => {
+                    element.addEventListener('click', (e) => {
+
+                        if(e.target.id == "PvP") gameMode = "PvP"
+                        else gameMode = "PvAi"
+
+                        startScreenShowHide()
+                        setTimeout(() => playerScreenShowHide() , 1000);
+                    })                
+                })
+
+                playerScreenContainer.forEach(element => {
+                    element.addEventListener('click', (e) => {
+                        // playerScreenShowHide()
+
+
+                    })                
+                })
+
+                const startScreenShowHide = () => {
+                    if(startScreenContainerClass.classList.contains("screen-hidden")){
+                            console.log("Show")
+                            //Show
+                            startScreenContainerClass.classList.add("screen-transition")
+                            startScreenContainerClass.clientWidth
+                            startScreenContainerClass.classList.remove("screen-hidden")
+                    }
+                    else {
+                        console.log("Hide")
+                        //Hide
+                        startScreenContainerClass.classList.add("screen-transition")
+                        startScreenContainerClass.classList.add("screen-hidden")
+                    }
+                    console.log(startScreenContainerClass.classList)
+                }
+
+
+
+                const playerScreenShowHide = () => {
+                    if(gameMode == "PvAi") {
+                        player2NameLabel.innerText = "Ai Name"
+                    }
+                    if(playerScreenContainerClass.classList.contains("screen-hidden")){
+                        //Show
+                        console.log("Show")
+                        playerScreenContainerClass.classList.add("screen-transition")
+                        playerScreenContainerClass.clientWidth
+                        playerScreenContainerClass.classList.remove("screen-hidden")
+                    }
+                    else {
+                        //Hide
+                        console.log("Hide")
+                        playerScreenContainerClass.classList.add("screen-transition")
+                        playerScreenContainerClass.classList.add("screen-hidden")
+                    }
+                }
+
+                const displayPlayerNames = () => {
+                    console.log(player1Name)
+                    console.log(player2Name)
+                    console.log(gameMode)
+                }
+
+                button = document.getElementsByClassName("test-button")[0]
+                button.addEventListener('click', displayPlayerNames, false)
+
+                startScreenContainerClass.addEventListener('transitionend', (e) => {
+                    startScreenContainerClass.classList.remove("screen-transition")
+                })
+
+                playerScreenContainerClass.addEventListener('transitionend', (e) => {
+                    playerScreenContainerClass.classList.remove("screen-transition")
+                })
+            })()
+
+
+
             // ===== PLAYER =====
             const Player = (name, mark) => {
                 let playerName = name
@@ -203,7 +359,7 @@
 
             // ===== GAME BOARD =====
             const gameBoard = (() => {
-                let container = document.getElementsByClassName("container")[0]
+                let gameBoardContainer = document.getElementsByClassName("game-board")[0]
 
                 let gameBoardArray = new Array(9).fill("")
                 const winningCombos = [["0", "1", "2"],
@@ -239,7 +395,8 @@
                         div.classList.add("tile")
                         div.setAttribute("index", idx)
                         div.addEventListener('click', addMark)
-                        container.appendChild(div)
+                        gameBoardContainer.appendChild(div)
+                        gameBoardContainer.style.display = "none"
                     })
                 }
 
@@ -254,8 +411,8 @@
                     let player1Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == gameEngine.getPlayers()[0].playerMark))
                     let player2Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == gameEngine.getPlayers()[1].playerMark))
 
-                    if (player1Win) return "X"
-                    if (player2Win) return "O"
+                    if (player1Win) return gameEngine.getPlayers()[0].playerMark
+                    if (player2Win) return gameEngine.getPlayers()[1].playerMark
                     if(gameBoardArray.indexOf("") == -1) return "TIE"
                     return null
                 }
@@ -270,12 +427,34 @@
                     checkGameboard,
                     checkGameboardWin
                 }
-                })()
+            })()
 
-                let player1 = Player("Shrek", "X")
-                // let player2 = Player("Your Mother", "O")
-                let player2 = AI("HAL9000", "O")
-                gameEngine.startGame(player1, player2)
+
+
+            // function StartPlayer() {
+            //     let gameMode = prompt("Do you want to play PvP or PvAI");
+            //     let person = prompt("Player1, Please enter your name");
+            //     let player1 = Player(person, "X")
+            //     let player2
+            //     if (gameMode == "PvP") {
+            //         person = prompt("Player2, Please enter your name");
+            //         player2 = Player(person, "O")
+            //     }
+            //     else {
+            //         player2 = AI("HAL9000", "O")
+            //     }
+ 
+            //     console.log(player1)
+            //     console.log(player2)
+            //     gameEngine.startGame(player1, player2)
+            // }
+
+            let player1 = Player("Shrek", "X")
+            // let player2 = Player("Your Mother", "O")
+            let player2 = AI("HAL9000", "O")
+            gameEngine.startGame(player1, player2)
+            // StartPlayer()
+            
 
         </script>
     </body>
