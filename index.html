@@ -44,7 +44,19 @@
                             <input type=text name="name" class="input-container" id="p2-name-input" autocomplete="off" required>
                         </div>
 
+
                         <!-- Need to add Ai Difficulty Settings -->
+
+                        <div class="form-container radio-container">
+                            <input type="radio" class="radio-input" id="easy-input" value="easy" name="difficulty-setting">
+                            <label for="easy-input" class="radio-label" >Easy</label>
+
+                            <input type="radio" class="radio-input" id="medium-input" value="medium" name="difficulty-setting">
+                            <label for="medium-input" class="radio-label" >Medium</label>
+
+                            <input type="radio" class="radio-input" id="hard-input" value="hard" name="difficulty-setting" >
+                            <label for="hard-input" class="radio-label" >Hard</label>
+                        </div>
 
                         <div class="submit-container" id="submit-form">
                             <button type="submit" class="submit-button disable-select">Submit</button>
@@ -82,25 +94,43 @@
 
             const optionMenus = (() => {      
                 // RESET OPTION
-                startScreenContainer = document.querySelectorAll(".start-tile")
-                playerScreenContainer = document.querySelectorAll(".player-tile")
-                startScreenContainerClass = document.querySelector(".start-screen")
-                playerScreenContainerClass = document.querySelector(".player-screen")
-                player2NameLabel = document.querySelector("#p2-name-label")
-                player2NameInput = document.querySelector("#p2-name-input")
-                submitBtn = document.querySelector(".submit-button")
-                // playerScreenContainerClass.classList.add("screen-hidden")
+                let startScreenContainer = document.querySelectorAll(".start-tile")
+                let playerScreenContainer = document.querySelectorAll(".player-tile")
+                let startScreenContainerClass = document.querySelector(".start-screen")
+                let playerScreenContainerClass = document.querySelector(".player-screen")
+                let player2NameLabel = document.querySelector("#p2-name-label")
+                let player2NameInput = document.querySelector("#p2-name-input")
+                let submitBtn = document.querySelector(".submit-button")
+                playerScreenContainerClass.classList.add("screen-hidden")
+                let gameBoardContainer = document.getElementsByClassName("game-board")[0]
+                gameBoardContainer.classList.add("screen-hidden")
 
                 let gameMode
+                let AiDifficulty
                 let player1Name
                 let player2Name
+
+                const PassOptionsToGameEngine = () => {
+                    let player1 = Player(player1Name, "X")
+                    let player2
+                    if(gameMode == "PvP") {
+                        player2 = Player(player2Name, "O")
+                    }
+                    else {
+                        player2 = AI(player2Name, "O")
+                    }
+
+                    gameEngine.startGame(player1, player2)
+                }
 
                 const submitPlayers = (e) => {
                     e.preventDefault()
                     player1Name = document.querySelector('#p1-name-input').value
                     player2Name = document.querySelector('#p2-name-input').value
+                    AiDifficulty = document.querySelector('input[type="radio"]:checked').value;
                     if (!player1Name || !player2Name) return
                     playerScreenShowHide()
+                    setTimeout(() => PassOptionsToGameEngine() , 1000);
                 }
 
                 submitBtn.addEventListener('click', submitPlayers)
@@ -117,47 +147,27 @@
                     })                
                 })
 
-                playerScreenContainer.forEach(element => {
-                    element.addEventListener('click', (e) => {
-                        // playerScreenShowHide()
-
-
-                    })                
-                })
-
                 const startScreenShowHide = () => {
                     if(startScreenContainerClass.classList.contains("screen-hidden")){
-                            console.log("Show")
-                            //Show
                             startScreenContainerClass.classList.add("screen-transition")
                             startScreenContainerClass.clientWidth
                             startScreenContainerClass.classList.remove("screen-hidden")
                     }
                     else {
-                        console.log("Hide")
-                        //Hide
                         startScreenContainerClass.classList.add("screen-transition")
                         startScreenContainerClass.classList.add("screen-hidden")
                     }
-                    console.log(startScreenContainerClass.classList)
                 }
 
-
-
                 const playerScreenShowHide = () => {
-                    if(gameMode == "PvAi") {
-                        player2NameLabel.innerText = "Ai Name"
-                    }
+                    if(gameMode == "PvAi") player2NameLabel.innerText = "Ai Name"
+
                     if(playerScreenContainerClass.classList.contains("screen-hidden")){
-                        //Show
-                        console.log("Show")
                         playerScreenContainerClass.classList.add("screen-transition")
                         playerScreenContainerClass.clientWidth
                         playerScreenContainerClass.classList.remove("screen-hidden")
                     }
                     else {
-                        //Hide
-                        console.log("Hide")
                         playerScreenContainerClass.classList.add("screen-transition")
                         playerScreenContainerClass.classList.add("screen-hidden")
                     }
@@ -167,6 +177,7 @@
                     console.log(player1Name)
                     console.log(player2Name)
                     console.log(gameMode)
+                    console.log(AiDifficulty)
                 }
 
                 button = document.getElementsByClassName("test-button")[0]
@@ -294,11 +305,13 @@
             // ===== GAME ENGINE =====
             const gameEngine = (() => {
                 let gameInfo = document.getElementsByClassName("gameInfo")[0]
+                let gameBoardContainer = document.getElementsByClassName("game-board")[0]
                 let gameEnd = false
                 let players = []
                 let currentPlayer
 
                 const startGame = (player1, player2) => {
+                    gameBoardContainer.style.display = "block"
                     addPlayers(player1, player2)
                     gameBoard.startGameBoard()
                     gameInfoWrite(`Current player is ${getCurrentPlayer().playerName}`)
@@ -396,8 +409,11 @@
                         div.setAttribute("index", idx)
                         div.addEventListener('click', addMark)
                         gameBoardContainer.appendChild(div)
-                        gameBoardContainer.style.display = "none"
+                        // console.log("TEST")
+                        // gameBoardContainer.style.display = "none"
                     })
+                    gameBoardContainer.style.display = "grid"
+                    gameBoardShowHide()
                 }
 
                 const checkGameboard = () => {
@@ -421,6 +437,22 @@
                     if(gameBoardArray.indexOf("") == -1) return "TIE"
                     return null
                 }                
+
+                const gameBoardShowHide = () => {
+                    if(gameBoardContainer.classList.contains("screen-hidden")){
+                        gameBoardContainer.classList.add("screen-transition")
+                        gameBoardContainer.clientWidth
+                        gameBoardContainer.classList.remove("screen-hidden")
+                    }
+                    else {
+                        gameBoardContainer.classList.add("screen-transition")
+                        gameBoardContainer.classList.add("screen-hidden")
+                    }
+                }
+
+                gameBoardContainer.addEventListener('transitionend', (e) => {
+                    gameBoardContainer.classList.remove("screen-transition")
+                })
 
                 return {
                     startGameBoard,
@@ -449,10 +481,10 @@
             //     gameEngine.startGame(player1, player2)
             // }
 
-            let player1 = Player("Shrek", "X")
+            // let player1 = Player("Shrek", "X")
             // let player2 = Player("Your Mother", "O")
-            let player2 = AI("HAL9000", "O")
-            gameEngine.startGame(player1, player2)
+            // let player2 = AI("HAL9000", "O")
+            // gameEngine.startGame(player1, player2)
             // StartPlayer()
             
 

@@ -70,7 +70,7 @@ body {
 
 .player-tile {
     border: 1px solid black;
-    width: 200px;
+    width: 300px;
     height: 200px;
 }
 
@@ -85,6 +85,24 @@ body {
 
 .screen-transition {
     transition: opacity 1s ease;
+}
+
+.radio-label {
+    display: inline-block;
+    border: 1px solid gray;
+    border-radius: 20px;
+    width: 70px;
+    padding: 5px 0;
+    text-align: center;
+}
+
+.radio-input:checked + .radio-label {
+    background: gray;
+    color: white;
+}
+
+.radio-input {
+    display: none;
 }
 
 /* FOOTER */
