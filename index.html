@@ -80,9 +80,12 @@
                 let playerScreenContainer = document.querySelectorAll(".player-tile")
                 let startScreenContainerClass = document.querySelector(".start-screen")
                 let playerScreenContainerClass = document.querySelector(".player-screen")
+
+                let radioContainer = document.querySelector(".radio-container")
                 let player2NameLabel = document.querySelector("#p2-name-label")
                 let player2NameInput = document.querySelector("#p2-name-input")
                 let submitBtn = document.querySelector(".submit-button")
+
                 playerScreenContainerClass.classList.add("screen-hidden")
                 let gameBoardContainer = document.getElementsByClassName("game-board")[0]
                 gameBoardContainer.classList.add("screen-hidden")
@@ -116,7 +119,10 @@
                 startScreenContainer.forEach(element => {
                     element.addEventListener('click', (e) => {
 
-                        if(e.target.id == "PvP") gameMode = "PvP"
+                        if(e.target.id == "PvP") {
+                            gameMode = "PvP"
+                            radioContainer.classList.add("screen-hidden")
+                        }
                         else gameMode = "PvAi"
 
                         startScreenShowHide()
