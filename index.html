@@ -63,24 +63,6 @@
                         </div>
                     </form>
                 </div>
-                <!-- <div class="player-tile" id="player-2">
-                    <p>Input Player 2 Name</p>
-                    <form class="player-form">
-                        <div class="form-container">
-                            <label for="name" class="label-container" id="name-label">
-                                Player 2 Name
-                            </label>
-                            <input type=text name="name" class="input-container" id="p2-name-input" autocomplete="off" required>
-                        </div>
-                        
-                        <div class="submit-container" id="submit-form">
-                            <button type="submit" class="p2-submit-button disable-select">Submit</button>
-                        </div>
-                    </form>
-                </div> -->
-                <!-- <div class="player-tile" id="ai">
-                    <p>Input Player 2 Name</p>
-                </div> -->
             </div>
         </div>
 
@@ -113,14 +95,10 @@
                 const PassOptionsToGameEngine = () => {
                     let player1 = Player(player1Name, "X")
                     let player2
-                    if(gameMode == "PvP") {
-                        player2 = Player(player2Name, "O")
-                    }
-                    else {
-                        player2 = AI(player2Name, "O")
-                    }
+                    if(gameMode == "PvP") player2 = Player(player2Name, "O")
+                    else player2 = AI(player2Name, "O", AiDifficulty)
 
-                    gameEngine.startGame(player1, player2)
+                    gameEngine.startGame(player1, player2, gameMode)
                 }
 
                 const submitPlayers = (e) => {
@@ -135,7 +113,6 @@
 
                 submitBtn.addEventListener('click', submitPlayers)
 
-                
                 startScreenContainer.forEach(element => {
                     element.addEventListener('click', (e) => {
 
@@ -206,9 +183,10 @@
             }
 
             // ===== AI =====
-            const AI = (name, mark) => {
+            const AI = (name, mark, aiD) => {
                 let playerName = name
                 let playerMark = mark
+                let AiDifficulty = aiD
 
                 const AiPlay = (gameBoardArray) => {
                     let bestScore = -Infinity
@@ -249,9 +227,16 @@
 
                 const easyMode = () => getRandomDec(0.1, 0.2)
 
-                const MediumMode = () => getRandomDec(0.5, 0.6)
+                const mediumMode = () => getRandomDec(0.5, 0.6)
 
-                const HardMode = () => getRandomDec(0.9, 1.0)
+                const hardMode = () => getRandomDec(0.9, 1.0)
+
+                const difficultyWeighting = (aiD) => {
+                    if (aiD == "easy") return easyMode()
+                    else if (aiD == "medium") return mediumMode()
+                    else if (aiD == "hard") return hardMode()
+                    else return 1
+                }
 
                 const minimax = (gameBoardArray, depth, alpha, beta, isMaximising) => {
                     
@@ -269,7 +254,7 @@
                                 // console.log(`MAXI depth: ${depth}, ${gameBoardArrayAi}`)
                                 let score = minimax(gameBoardArray, depth - 1, alpha, beta, !isMaximising)
                                 gameBoardArray[i] = ""
-                                maxScore = Math.max(score / HardMode(), maxScore)
+                                maxScore = Math.max(score / difficultyWeighting(AiDifficulty), maxScore)
                                 alpha = Math.max(alpha, score)
                                 if(beta <= alpha) break
                             }
@@ -284,7 +269,7 @@
                                 // console.log(`MINI depth: ${depth}, ${gameBoardArrayAi}`)
                                 let score = minimax(gameBoardArray, depth - 1, alpha, beta, !isMaximising)
                                 gameBoardArray[i] = ""
-                                minScore = Math.min(score * HardMode(), minScore)
+                                minScore = Math.min(score * difficultyWeighting(AiDifficulty), minScore)
                                 beta = Math.min(beta, score)
                                 if(beta <= alpha) break
                         
@@ -307,15 +292,18 @@
                 let gameInfo = document.getElementsByClassName("gameInfo")[0]
                 let gameBoardContainer = document.getElementsByClassName("game-board")[0]
                 let gameEnd = false
+                let gameMode
+                let AiDifficulty
                 let players = []
                 let currentPlayer
 
-                const startGame = (player1, player2) => {
+                const startGame = (p1, p2, gm) => {
                     gameBoardContainer.style.display = "block"
-                    addPlayers(player1, player2)
+                    addPlayers(p1, p2)
                     gameBoard.startGameBoard()
                     gameInfoWrite(`Current player is ${getCurrentPlayer().playerName}`)
                     gameEnd = false
+                    gameMode = gm
                 }
 
                 const addPlayers = (p1, p2) => {
@@ -329,8 +317,7 @@
                 const nextTurn = (gameBoard) => {
                     switchPlayer()
                     gameInfoWrite(`Current player is ${getCurrentPlayer().playerName}`)
-                    // AND AI game mode for PvP or PvAI game modes
-                    if (currentPlayer == players[1]) currentPlayer.AiPlay(gameBoard)
+                    if (currentPlayer == players[1] && gameMode == "PvAi") currentPlayer.AiPlay(gameBoard)
                 }
 
                 const switchPlayer = () => {
