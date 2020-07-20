@@ -74,18 +74,18 @@
 
         <script>
 
-            const optionMenus = (() => {      
+            const optionsMenu = (() => {      
                 // RESET OPTION
-                let startScreenContainer = document.querySelectorAll(".start-tile")
-                let playerScreenContainer = document.querySelectorAll(".player-tile")
-                let startScreenContainerClass = document.querySelector(".start-screen")
-                let playerScreenContainerClass = document.querySelector(".player-screen")
+                let playerForm = document.querySelector(".player-form")
+                let startScreen = document.querySelector(".start-screen")
+
+                let playerScreen = document.querySelector(".player-screen")
+                playerScreen.classList.add("screen-hidden")
 
                 let radioContainer = document.querySelector(".radio-container")
                 let player2NameLabel = document.querySelector("#p2-name-label")
                 let submitBtn = document.querySelector(".submit-button")
-
-                playerScreenContainerClass.classList.add("screen-hidden")
+                
                 let gameBoardContainer = document.getElementsByClassName("game-board")[0]
                 gameBoardContainer.classList.add("screen-hidden")
 
@@ -94,40 +94,52 @@
                 let player1Name
                 let player2Name
 
+                // Not reseting
+                const resetMenu = () => {
+                    playerForm.reset()
+                    player1 = ""
+                    player2 = ""
+                    gameMode = ""
+                    AiDifficulty = ""
+                }
+
                 const PassOptionsToGameEngine = () => {
                     let player1 = Player(player1Name, "X")
                     let player2
                     if(gameMode == "PvP") player2 = Player(player2Name, "O")
                     else player2 = AI(player2Name, "O", AiDifficulty)
-
+                    // resetMenu()
+                    gameBoardContainer.innerHTML = ""
                     gameEngine.startGame(player1, player2, gameMode)
                 }
 
-                const submitPlayers = (e) => {
+                submitBtn.addEventListener('click', (e) => {
                     player1Name = document.querySelector('#p1-name-input').value
                     player2Name = document.querySelector('#p2-name-input').value
-                    AiDifficulty = document.querySelector('input[type="radio"]:checked').value;
-                    if (!player1Name || !player2Name || !AiDifficulty) return
-                    hideScreenWithFade(playerScreenContainerClass)
+                    if(gameMode == "PvAi") {
+                        AiDifficulty = document.querySelector('input[type="radio"]:checked').value
+                    }
+                    if (!player1Name || !player2Name || 
+                        (gameMode == "PvAi" && !AiDifficulty)) {
+                            return
+                        }
+                    hideScreenWithFade(playerScreen)
                     setTimeout(() => PassOptionsToGameEngine() , 1000);
-                }
+                })
 
-                submitBtn.addEventListener('click', submitPlayers)
-
-                startScreenContainer.forEach(element => {
+                startScreen.querySelectorAll(".start-tile").forEach(element => {
                     element.addEventListener('click', (e) => {
-
                         if(e.target.id == "PvP") {
                             gameMode = "PvP"
                             radioContainer.classList.add("screen-hidden")
                         }
                         else {
                             gameMode = "PvAi"
+                            radioContainer.classList.remove("screen-hidden")
                             player2NameLabel.innerText = "Ai Name"
                         }
-
-                        hideScreenWithFade(startScreenContainerClass)
-                        setTimeout(() => showScreenWithFade(playerScreenContainerClass) , 1000);
+                        hideScreenWithFade(startScreen)
+                        setTimeout(() => showScreenWithFade(playerScreen) , 1000);
                     })                
                 })
 
@@ -138,28 +150,35 @@
                 }
 
                 const hideScreenWithFade = (elem) => {
+                    if (elem == gameBoardContainer) {
+                        elem.classList.add("screen-transition-grid")
+                    }
                     elem.classList.add("screen-transition")
                     elem.classList.add("screen-hidden")
                 }
 
-                startScreenContainerClass.addEventListener('transitionend', (e) => {
-                    startScreenContainerClass.classList.remove("screen-transition")
+                startScreen.addEventListener('transitionend', (e) => {
+                    startScreen.classList.remove("screen-transition")
                 })
 
-                playerScreenContainerClass.addEventListener('transitionend', (e) => {
-                    playerScreenContainerClass.classList.remove("screen-transition")
+                playerScreen.addEventListener('transitionend', (e) => {
+                    playerScreen.classList.remove("screen-transition")
                 })
 
-                // const displayPlayerNames = () => {
-                //     console.log(player1Name)
-                //     console.log(player2Name)
-                //     console.log(gameMode)
-                //     console.log(AiDifficulty)
-                // }
+                const displayPlayerNames = () => {
+                    console.log(player1Name)
+                    console.log(player2Name)
+                    console.log(gameMode)
+                    console.log(AiDifficulty)
+                }
 
-                // button = document.getElementsByClassName("test-button")[0]
-                // button.addEventListener('click', displayPlayerNames, false)
+                button = document.getElementsByClassName("test-button")[0]
+                button.addEventListener('click', displayPlayerNames, false)
 
+                return {
+                    showScreenWithFade,
+                    hideScreenWithFade
+                }
 
             })()
 
@@ -208,12 +227,6 @@
                     gameBoard.checkGameboard()  
                 }
 
-                let scores = {
-                    "O": 10,
-                    "X": -10,
-                    "TIE": 0
-                }
-
                 // 0.1 - 0.2 = Dumb
                 // 0.5 - 0.6 = Normal
                 // 0.9 - 1.0 = Perfect
@@ -230,6 +243,12 @@
                     else if (aiD == "medium") return mediumMode()
                     else if (aiD == "hard") return hardMode()
                     else return 1
+                }
+
+                let scores = {
+                    "O": 10,
+                    "X": -10,
+                    "TIE": 0
                 }
 
                 const minimax = (gameBoardArray, depth, alpha, beta, isMaximising) => {
@@ -291,8 +310,10 @@
                 let players = []
                 let currentPlayer
 
+                let startScreen = document.querySelector(".start-screen")
+
                 const startGame = (p1, p2, gm) => {
-                    gameBoardContainer.style.display = "block"
+                    console.log(p1)
                     addPlayers(p1, p2)
                     gameBoard.startGameBoard()
                     gameInfoWrite(`Current player is ${getCurrentPlayer().playerName}`)
@@ -321,6 +342,9 @@
                 const winningScenario = () => {
                     gameInfoWrite(`Congrats, ${getCurrentPlayer().playerName} won`)
                     gameEnd = true
+                    optionsMenu.hideScreenWithFade(gameBoardContainer)
+                    setTimeout(() => optionsMenu.showScreenWithFade(startScreen) , 1000);
+                    players.length = 0
                     //RESET CODE HERE
                 }
 
@@ -329,6 +353,14 @@
                     gameEnd = true
                     //RESET CODE HERE
                 }
+
+                startScreen.addEventListener('transitionend', (e) => {
+                    startScreen.classList.remove("screen-transition")
+                })
+
+                gameBoardContainer.addEventListener('transitionend', (e) => {
+                    gameBoardContainer.classList.remove("screen-transition")
+                })
 
                 const getPlayers = () => players
 
@@ -369,6 +401,10 @@
                     renderGameboard()
                 }
 
+                const resetGameBoard = () => {
+                    gameBoardArray = gameBoardArray.map(el => "")
+                }
+
                 const addMark = (e) => {
                     let div = e.target
                     let index = div.getAttribute("index")
@@ -393,21 +429,32 @@
                         // console.log("TEST")
                         // gameBoardContainer.style.display = "none"
                     })
-                    gameBoardContainer.style.display = "grid"
+                    // gameBoardContainer.classList.display = "grid"
                     gameBoardShowHide()
                 }
 
                 const checkGameboard = () => {
                     if(checkGameboardWin() == "X" || 
-                    checkGameboardWin() == "O") gameEngine.winningScenario()
+                    checkGameboardWin() == "O") {
+                        resetGameBoard()
+                        gameEngine.winningScenario()
+                    }
                     else if(checkGameboardTie(gameBoardArray) == "TIE") gameEngine.tieScenario()
                     else gameEngine.nextTurn(gameBoardArray)
                 }
+
+                // Check current board for a single win. Always check board after each mark placement.
+                // O | X | 
+                // ---------
+                //   | O | X
+                // ---------
+                // X |   | O
 
                 const checkGameboardWin = () => {
                     let player1Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == gameEngine.getPlayers()[0].playerMark))
                     let player2Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == gameEngine.getPlayers()[1].playerMark))
 
+                    // Winner will always be current player (If called before switch) Need to return both win scenarios for minimax algorithm
                     if (player1Win) return gameEngine.getPlayers()[0].playerMark
                     if (player2Win) return gameEngine.getPlayers()[1].playerMark
                     if(gameBoardArray.indexOf("") == -1) return "TIE"
@@ -433,6 +480,7 @@
 
                 gameBoardContainer.addEventListener('transitionend', (e) => {
                     gameBoardContainer.classList.remove("screen-transition")
+                    gameBoardContainer.classList.remove("screen-transition-grid")
                 })
 
                 return {

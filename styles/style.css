@@ -83,6 +83,11 @@ body {
     opacity: 0;
 }
 
+.screen-transition.screen-transition-grid.screen-hidden {
+    display: grid;
+    opacity: 0;
+}
+
 .screen-transition {
     transition: opacity 1s ease;
 }
