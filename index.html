@@ -11,7 +11,7 @@
     <body>
         <div class="header">
             <h1 class="projectTitle">Tic-Tac-Toe</h1>
-            <button class="test-button">TEST</button>
+            <button class="reset-button">TEST</button>
         </div>
 
         <div class="gameInfo">
@@ -43,9 +43,6 @@
                               </label>
                             <input type=text name="name" class="input-container" id="p2-name-input" autocomplete="off" required>
                         </div>
-
-
-                        <!-- Need to add Ai Difficulty Settings -->
 
                         <div class="form-container radio-container">
                             <input type="radio" class="radio-input" id="easy-input" value="easy" name="difficulty-setting">
@@ -108,9 +105,9 @@
                     let player2
                     if(gameMode == "PvP") player2 = Player(player2Name, "O")
                     else player2 = AI(player2Name, "O", AiDifficulty)
-                    // resetMenu()
                     gameBoardContainer.innerHTML = ""
                     gameEngine.startGame(player1, player2, gameMode)
+                    playerForm.reset()
                 }
 
                 submitBtn.addEventListener('click', (e) => {
@@ -165,15 +162,15 @@
                     playerScreen.classList.remove("screen-transition")
                 })
 
-                const displayPlayerNames = () => {
-                    console.log(player1Name)
-                    console.log(player2Name)
-                    console.log(gameMode)
-                    console.log(AiDifficulty)
-                }
+                resetBtn = document.getElementsByClassName("reset-button")[0]
+                resetBtn.addEventListener('transitionend', (e) => {
+                    startScreen.classList.remove("screen-transition")
+                })
 
-                button = document.getElementsByClassName("test-button")[0]
-                button.addEventListener('click', displayPlayerNames, false)
+                gameBoardContainer.addEventListener('transitionend', (e) => {
+                    gameBoardContainer.classList.remove("screen-transition")
+                    gameBoardContainer.classList.remove("screen-transition-grid")
+                })
 
                 return {
                     showScreenWithFade,
@@ -342,25 +339,27 @@
                 const winningScenario = () => {
                     gameInfoWrite(`Congrats, ${getCurrentPlayer().playerName} won`)
                     gameEnd = true
-                    optionsMenu.hideScreenWithFade(gameBoardContainer)
-                    setTimeout(() => optionsMenu.showScreenWithFade(startScreen) , 1000);
-                    players.length = 0
-                    //RESET CODE HERE
+                    optionsMenu.showScreenWithFade(resetBtn)
                 }
 
                 const tieScenario = () => {
                     gameInfoWrite(`It's a tie.`)
                     gameEnd = true
-                    //RESET CODE HERE
+                    optionsMenu.showScreenWithFade(resetBtn)
                 }
 
-                startScreen.addEventListener('transitionend', (e) => {
-                    startScreen.classList.remove("screen-transition")
+                resetBtn = document.getElementsByClassName("reset-button")[0]
+                resetBtn.classList.add("screen-hidden")
+                resetBtn.addEventListener('click', (e) => {
+                    optionsMenu.hideScreenWithFade(gameBoardContainer)
+                    optionsMenu.hideScreenWithFade(resetBtn)
+                    setTimeout(() => optionsMenu.showScreenWithFade(startScreen) , 1500);
+
+                    players.length = 0
+                    gameInfo.innerText = ""
                 })
 
-                gameBoardContainer.addEventListener('transitionend', (e) => {
-                    gameBoardContainer.classList.remove("screen-transition")
-                })
+
 
                 const getPlayers = () => players
 
@@ -426,11 +425,9 @@
                         div.setAttribute("index", idx)
                         div.addEventListener('click', addMark)
                         gameBoardContainer.appendChild(div)
-                        // console.log("TEST")
-                        // gameBoardContainer.style.display = "none"
                     })
-                    // gameBoardContainer.classList.display = "grid"
-                    gameBoardShowHide()
+                    optionsMenu.showScreenWithFade(gameBoardContainer)
+                    // gameBoardShowHide()
                 }
 
                 const checkGameboard = () => {
@@ -439,7 +436,10 @@
                         resetGameBoard()
                         gameEngine.winningScenario()
                     }
-                    else if(checkGameboardTie(gameBoardArray) == "TIE") gameEngine.tieScenario()
+                    else if(checkGameboardTie(gameBoardArray) == "TIE") {
+                        resetGameBoard()
+                        gameEngine.tieScenario()
+                    }
                     else gameEngine.nextTurn(gameBoardArray)
                 }
 
@@ -477,11 +477,6 @@
                         gameBoardContainer.classList.add("screen-hidden")
                     }
                 }
-
-                gameBoardContainer.addEventListener('transitionend', (e) => {
-                    gameBoardContainer.classList.remove("screen-transition")
-                    gameBoardContainer.classList.remove("screen-transition-grid")
-                })
 
                 return {
                     startGameBoard,
