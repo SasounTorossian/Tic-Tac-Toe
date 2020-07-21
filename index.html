@@ -91,11 +91,10 @@
                 let player1Name
                 let player2Name
 
-                // Not reseting
                 const resetMenu = () => {
                     playerForm.reset()
-                    player1 = ""
-                    player2 = ""
+                    player1Name = ""
+                    player2Name = ""
                     gameMode = ""
                     AiDifficulty = ""
                 }
@@ -129,6 +128,7 @@
                         if(e.target.id == "PvP") {
                             gameMode = "PvP"
                             radioContainer.classList.add("screen-hidden")
+                            player2NameLabel.innerText = "Player 2 Name"
                         }
                         else {
                             gameMode = "PvAi"
