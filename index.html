@@ -140,10 +140,23 @@
                     })                
                 })
 
-                const showScreenWithFade = (elem) => {
-                    elem.classList.add("screen-transition")
+                const showMarkWithFade = (elem) => {
+                    elem.classList.add("mark-transition")
                     elem.clientWidth
-                    elem.classList.remove("screen-hidden")
+                    elem.classList.remove("mark-hidden")
+                }
+
+                const showScreenWithFade = (elem) => {
+                    if(elem.classList.contains("tile")) {
+                        elem.classList.add("mark-transition")
+                        elem.clientWidth
+                        elem.classList.remove("mark-hidden")
+                    }
+                    else {
+                        elem.classList.add("screen-transition")
+                        elem.clientWidth
+                        elem.classList.remove("screen-hidden")
+                    }
                 }
 
                 const hideScreenWithFade = (elem) => {
@@ -162,17 +175,18 @@
                     playerScreen.classList.remove("screen-transition")
                 })
 
+                gameBoardContainer.addEventListener('transitionend', (e) => {
+                    gameBoardContainer.classList.remove("screen-transition-grid")
+                    gameBoardContainer.classList.remove("screen-transition")
+                })
+
                 resetBtn = document.getElementsByClassName("reset-button")[0]
                 resetBtn.addEventListener('transitionend', (e) => {
                     startScreen.classList.remove("screen-transition")
                 })
 
-                gameBoardContainer.addEventListener('transitionend', (e) => {
-                    gameBoardContainer.classList.remove("screen-transition")
-                    gameBoardContainer.classList.remove("screen-transition-grid")
-                })
-
                 return {
+                    showMarkWithFade,
                     showScreenWithFade,
                     hideScreenWithFade
                 }
@@ -407,6 +421,7 @@
                 const addMark = (e) => {
                     let div = e.target
                     let index = div.getAttribute("index")
+                    div.classList.add("mark-hidden")
 
                     if(gameEngine.isGameOver()) return
                     if(div.innerText != "") return
@@ -414,6 +429,7 @@
                     let mark = gameEngine.getCurrentPlayer().playerMark
                     gameBoardArray[index] = mark
                     div.innerText = mark
+                    optionsMenu.showScreenWithFade(div)
                     
                     checkGameboard()           
                 }
@@ -427,7 +443,6 @@
                         gameBoardContainer.appendChild(div)
                     })
                     optionsMenu.showScreenWithFade(gameBoardContainer)
-                    // gameBoardShowHide()
                 }
 
                 const checkGameboard = () => {
@@ -466,50 +481,12 @@
                     return null
                 }                
 
-                const gameBoardShowHide = () => {
-                    if(gameBoardContainer.classList.contains("screen-hidden")){
-                        gameBoardContainer.classList.add("screen-transition")
-                        gameBoardContainer.clientWidth
-                        gameBoardContainer.classList.remove("screen-hidden")
-                    }
-                    else {
-                        gameBoardContainer.classList.add("screen-transition")
-                        gameBoardContainer.classList.add("screen-hidden")
-                    }
-                }
-
                 return {
                     startGameBoard,
                     checkGameboard,
                     checkGameboardWin
                 }
             })()
-
-
-
-            // function StartPlayer() {
-            //     let gameMode = prompt("Do you want to play PvP or PvAI");
-            //     let person = prompt("Player1, Please enter your name");
-            //     let player1 = Player(person, "X")
-            //     let player2
-            //     if (gameMode == "PvP") {
-            //         person = prompt("Player2, Please enter your name");
-            //         player2 = Player(person, "O")
-            //     }
-            //     else {
-            //         player2 = AI("HAL9000", "O")
-            //     }
- 
-            //     console.log(player1)
-            //     console.log(player2)
-            //     gameEngine.startGame(player1, player2)
-            // }
-
-            // let player1 = Player("Shrek", "X")
-            // let player2 = Player("Your Mother", "O")
-            // let player2 = AI("HAL9000", "O")
-            // gameEngine.startGame(player1, player2)
-            // StartPlayer()
             
 
         </script>

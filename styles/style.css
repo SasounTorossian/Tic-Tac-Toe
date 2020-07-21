@@ -78,18 +78,30 @@ body {
     display: none
 }
 
+.screen-transition {
+    transition: opacity 1s ease;
+}
+
 .screen-transition.screen-hidden {
     display: flex;
     opacity: 0;
 }
 
-.screen-transition.screen-transition-grid.screen-hidden {
+.screen-transition-grid.screen-hidden {
     display: grid;
     opacity: 0;
 }
 
-.screen-transition {
-    transition: opacity 1s ease;
+.mark-hidden {
+    color: Orange;
+}
+
+.mark-transition {
+    transition: color 1s ease;
+}
+
+.mark-transition.mark-hidden {
+    color: black;
 }
 
 .radio-label {
