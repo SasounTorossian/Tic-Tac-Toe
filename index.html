@@ -72,7 +72,6 @@
         <script>
 
             const optionsMenu = (() => {      
-                // RESET OPTION
                 let playerForm = document.querySelector(".player-form")
                 let startScreen = document.querySelector(".start-screen")
 
@@ -231,16 +230,14 @@
                         }
                     }
 
-                    let mark = gameEngine.getCurrentPlayer().playerMark
                     gameBoardArray[bestMove] = playerMark
                     let div = document.querySelector(`[index="${bestMove}"]`);
-                    div.innerText = mark
-                    gameBoard.checkGameboard()  
+                    div.classList.add("mark-hidden")
+                    div.innerText = playerMark
+                    optionsMenu.showScreenWithFade(div)
+                    gameBoard.checkGameOver()
                 }
 
-                // 0.1 - 0.2 = Dumb
-                // 0.5 - 0.6 = Normal
-                // 0.9 - 1.0 = Perfect
                 const getRandomDec = (a, b) => (Math.random() * (a - b) + b).toFixed(1)
 
                 const easyMode = () => getRandomDec(0.1, 0.2)
@@ -263,9 +260,7 @@
                 }
 
                 const minimax = (gameBoardArray, depth, alpha, beta, isMaximising) => {
-                    
-                    // Pass gameboard to checkGameboardWin()?
-                    let result = gameBoard.checkGameboardWin()
+                    let result = gameBoard.checkGameboard()
                     if (result !== null) return scores[result]
                     if (depth == 0) return scores["TIE"]
                     
@@ -275,7 +270,6 @@
                         for(let i = 0; i < gameBoardArray.length; i++) {
                             if(gameBoardArray[i] == "") {
                                 gameBoardArray[i] = "O"
-                                // console.log(`MAXI depth: ${depth}, ${gameBoardArrayAi}`)
                                 let score = minimax(gameBoardArray, depth - 1, alpha, beta, !isMaximising)
                                 gameBoardArray[i] = ""
                                 maxScore = Math.max(score / difficultyWeighting(AiDifficulty), maxScore)
@@ -290,7 +284,6 @@
                         for(let i = 0; i < gameBoardArray.length; i++) {
                             if(gameBoardArray[i] == "") {
                                 gameBoardArray[i] = "X"
-                                // console.log(`MINI depth: ${depth}, ${gameBoardArrayAi}`)
                                 let score = minimax(gameBoardArray, depth - 1, alpha, beta, !isMaximising)
                                 gameBoardArray[i] = ""
                                 minScore = Math.min(score * difficultyWeighting(AiDifficulty), minScore)
@@ -350,14 +343,10 @@
                     currentPlayer = (currentPlayer == players[0]) ? players[1] : players[0]
                 }
 
-                const winningScenario = () => {
-                    gameInfoWrite(`Congrats, ${getCurrentPlayer().playerName} won`)
-                    gameEnd = true
-                    optionsMenu.showScreenWithFade(resetBtn)
-                }
+                const gameOverScenario = (result) => {
+                    if(result == "TIE") gameInfoWrite(`It's a tie.`)
+                    else gameInfoWrite(`Congrats, ${getCurrentPlayer().playerName} won`)
 
-                const tieScenario = () => {
-                    gameInfoWrite(`It's a tie.`)
                     gameEnd = true
                     optionsMenu.showScreenWithFade(resetBtn)
                 }
@@ -373,8 +362,6 @@
                     gameInfo.innerText = ""
                 })
 
-
-
                 const getPlayers = () => players
 
                 const getCurrentPlayer = () => currentPlayer
@@ -388,8 +375,7 @@
                     switchPlayer,
                     getPlayers,
                     getCurrentPlayer,
-                    winningScenario,
-                    tieScenario,
+                    gameOverScenario,
                     isGameOver,
                     nextTurn
                 }
@@ -401,14 +387,6 @@
                 let gameBoardContainer = document.getElementsByClassName("game-board")[0]
 
                 let gameBoardArray = new Array(9).fill("")
-                const winningCombos = [["0", "1", "2"],
-                                        ["3", "4", "5"],
-                                        ["6", "7", "8"],
-                                        ["0", "3", "6"],
-                                        ["1", "4", "7"],
-                                        ["2", "5", "8"],
-                                        ["0", "4", "8"],
-                                        ["2", "4", "6"]]
 
                 const startGameBoard = () => {
                     renderGameboard()
@@ -431,7 +409,7 @@
                     div.innerText = mark
                     optionsMenu.showScreenWithFade(div)
                     
-                    checkGameboard()           
+                    checkGameOver()     
                 }
 
                 const renderGameboard = () => {
@@ -445,50 +423,49 @@
                     optionsMenu.showScreenWithFade(gameBoardContainer)
                 }
 
+
+                const checkGameOver = () => {
+                    if(checkGameboard() == null) {
+                        gameEngine.nextTurn(gameBoardArray)
+                    }
+                    else {
+                        gameEngine.gameOverScenario(checkGameboard())
+                        resetGameBoard()
+                    }
+                }
+                
+                const winningCombos = [["0", "1", "2"], /* Top horizontal     */
+                                       ["3", "4", "5"], /* Middle horizontal  */
+                                       ["6", "7", "8"], /* Bottom horizontal  */
+                                       ["0", "3", "6"], /* Left vertical      */
+                                       ["1", "4", "7"], /* Middle vertical    */
+                                       ["2", "5", "8"], /* Right vertical     */
+                                       ["0", "4", "8"], /* Top-left diagonal  */
+                                       ["2", "4", "6"]] /* Top-right diagonal */
+
                 const checkGameboard = () => {
-                    if(checkGameboardWin() == "X" || 
-                    checkGameboardWin() == "O") {
-                        resetGameBoard()
-                        gameEngine.winningScenario()
-                    }
-                    else if(checkGameboardTie(gameBoardArray) == "TIE") {
-                        resetGameBoard()
-                        gameEngine.tieScenario()
-                    }
-                    else gameEngine.nextTurn(gameBoardArray)
-                }
+                    let player1Win = winningCombos.some(arr => 
+                                                arr.every(el => 
+                                                gameBoardArray[el] == "X")) 
 
-                // Check current board for a single win. Always check board after each mark placement.
-                // O | X | 
-                // ---------
-                //   | O | X
-                // ---------
-                // X |   | O
+                    let player2Win = winningCombos.some(arr => 
+                                                arr.every(el => 
+                                                gameBoardArray[el] == "O"))
 
-                const checkGameboardWin = () => {
-                    let player1Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == gameEngine.getPlayers()[0].playerMark))
-                    let player2Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == gameEngine.getPlayers()[1].playerMark))
+                    let playerTie = gameBoardArray.every(el => el != "")
 
-                    // Winner will always be current player (If called before switch) Need to return both win scenarios for minimax algorithm
-                    if (player1Win) return gameEngine.getPlayers()[0].playerMark
-                    if (player2Win) return gameEngine.getPlayers()[1].playerMark
-                    if(gameBoardArray.indexOf("") == -1) return "TIE"
+                    if (player1Win) return "X"
+                    if (player2Win) return "O"
+                    if (playerTie) return "TIE"
                     return null
-                }
-
-                const checkGameboardTie = () => {
-                    if(gameBoardArray.indexOf("") == -1) return "TIE"
-                    return null
-                }                
+                }           
 
                 return {
                     startGameBoard,
                     checkGameboard,
-                    checkGameboardWin
+                    checkGameOver
                 }
             })()
-            
-
         </script>
     </body>
 </html>
