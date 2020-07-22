@@ -78,6 +78,8 @@
                 let playerScreen = document.querySelector(".player-screen")
                 playerScreen.classList.add("screen-hidden")
 
+                let gameInfo = document.querySelector(".gameInfo")
+
                 let radioContainer = document.querySelector(".radio-container")
                 let player2NameLabel = document.querySelector("#p2-name-label")
                 let submitBtn = document.querySelector(".submit-button")
@@ -105,7 +107,7 @@
                     else player2 = AI(player2Name, "O", AiDifficulty)
                     gameBoardContainer.innerHTML = ""
                     gameEngine.startGame(player1, player2, gameMode)
-                    playerForm.reset()
+                    resetMenu()
                 }
 
                 submitBtn.addEventListener('click', (e) => {
@@ -118,8 +120,8 @@
                         (gameMode == "PvAi" && !AiDifficulty)) {
                             return
                         }
-                    hideScreenWithFade(playerScreen)
-                    setTimeout(() => PassOptionsToGameEngine() , 1000);
+                    hideElementWithFade(playerScreen)
+                    setTimeout(() => PassOptionsToGameEngine() , 1000)
                 })
 
                 startScreen.querySelectorAll(".start-tile").forEach(element => {
@@ -134,18 +136,12 @@
                             radioContainer.classList.remove("screen-hidden")
                             player2NameLabel.innerText = "Ai Name"
                         }
-                        hideScreenWithFade(startScreen)
-                        setTimeout(() => showScreenWithFade(playerScreen) , 1000);
+                        hideElementWithFade(startScreen)
+                        setTimeout(() => showElementWithFade(playerScreen) , 1000)
                     })                
                 })
 
-                const showMarkWithFade = (elem) => {
-                    elem.classList.add("mark-transition")
-                    elem.clientWidth
-                    elem.classList.remove("mark-hidden")
-                }
-
-                const showScreenWithFade = (elem) => {
+                const showElementWithFade = (elem) => {
                     if(elem.classList.contains("tile")) {
                         elem.classList.add("mark-transition")
                         elem.clientWidth
@@ -158,7 +154,7 @@
                     }
                 }
 
-                const hideScreenWithFade = (elem) => {
+                const hideElementWithFade = (elem) => {
                     if (elem == gameBoardContainer) {
                         elem.classList.add("screen-transition-grid")
                     }
@@ -174,6 +170,10 @@
                     playerScreen.classList.remove("screen-transition")
                 })
 
+                gameInfo.addEventListener('transitionend', (e) => {
+                    gameInfo.classList.remove("screen-transition")
+                })
+
                 gameBoardContainer.addEventListener('transitionend', (e) => {
                     gameBoardContainer.classList.remove("screen-transition-grid")
                     gameBoardContainer.classList.remove("screen-transition")
@@ -185,9 +185,8 @@
                 })
 
                 return {
-                    showMarkWithFade,
-                    showScreenWithFade,
-                    hideScreenWithFade
+                    showElementWithFade,
+                    hideElementWithFade
                 }
 
             })()
@@ -231,10 +230,10 @@
                     }
 
                     gameBoardArray[bestMove] = playerMark
-                    let div = document.querySelector(`[index="${bestMove}"]`);
+                    let div = document.querySelector(`[index="${bestMove}"]`)
                     div.classList.add("mark-hidden")
                     div.innerText = playerMark
-                    optionsMenu.showScreenWithFade(div)
+                    optionsMenu.showElementWithFade(div)
                     gameBoard.checkGameOver()
                 }
 
@@ -306,8 +305,9 @@
 
             // ===== GAME ENGINE =====
             const gameEngine = (() => {
-                let gameInfo = document.getElementsByClassName("gameInfo")[0]
-                let gameBoardContainer = document.getElementsByClassName("game-board")[0]
+                let gameInfo = document.querySelector(".gameInfo")
+                gameInfo.classList.add("screen-hidden")
+                let gameBoardContainer = document.querySelector(".game-board")
                 let gameEnd = false
                 let gameMode
                 let AiDifficulty
@@ -317,12 +317,13 @@
                 let startScreen = document.querySelector(".start-screen")
 
                 const startGame = (p1, p2, gm) => {
-                    console.log(p1)
                     addPlayers(p1, p2)
                     gameBoard.startGameBoard()
-                    gameInfoWrite(`Current player is ${getCurrentPlayer().playerName}`)
+                   
                     gameEnd = false
                     gameMode = gm
+                    optionsMenu.showElementWithFade(gameInfo)
+                    gameInfoWrite(`Current player is ${getCurrentPlayer().playerName}`)
                 }
 
                 const addPlayers = (p1, p2) => {
@@ -348,18 +349,18 @@
                     else gameInfoWrite(`Congrats, ${getCurrentPlayer().playerName} won`)
 
                     gameEnd = true
-                    optionsMenu.showScreenWithFade(resetBtn)
+                    optionsMenu.showElementWithFade(resetBtn)
                 }
 
                 resetBtn = document.getElementsByClassName("reset-button")[0]
                 resetBtn.classList.add("screen-hidden")
                 resetBtn.addEventListener('click', (e) => {
-                    optionsMenu.hideScreenWithFade(gameBoardContainer)
-                    optionsMenu.hideScreenWithFade(resetBtn)
-                    setTimeout(() => optionsMenu.showScreenWithFade(startScreen) , 1500);
+                    optionsMenu.hideElementWithFade(gameInfo)
+                    optionsMenu.hideElementWithFade(gameBoardContainer)
+                    optionsMenu.hideElementWithFade(resetBtn)
+                    setTimeout(() => optionsMenu.showElementWithFade(startScreen) , 1500)
 
                     players.length = 0
-                    gameInfo.innerText = ""
                 })
 
                 const getPlayers = () => players
@@ -407,7 +408,7 @@
                     let mark = gameEngine.getCurrentPlayer().playerMark
                     gameBoardArray[index] = mark
                     div.innerText = mark
-                    optionsMenu.showScreenWithFade(div)
+                    optionsMenu.showElementWithFade(div)
                     
                     checkGameOver()     
                 }
@@ -420,7 +421,7 @@
                         div.addEventListener('click', addMark)
                         gameBoardContainer.appendChild(div)
                     })
-                    optionsMenu.showScreenWithFade(gameBoardContainer)
+                    optionsMenu.showElementWithFade(gameBoardContainer)
                 }
 
 
