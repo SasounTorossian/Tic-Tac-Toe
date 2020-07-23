@@ -200,3 +200,22 @@ body {
 }
 
 /* FOOTER */
+.footer {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    margin: auto;
+  }
+  
+  .footer p {
+    font-weight: 500;
+    font-size: 25px;
+  }
+  
+  .footer img {
+    transition: all 0.3s ease;
+  }
+  
+  .footer img:hover {
+    transform: scale(1.1);
+  }
