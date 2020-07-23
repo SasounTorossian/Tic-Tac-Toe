@@ -1,3 +1,7 @@
+* {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 html {
     height: 100%;
     width: 100%
@@ -10,10 +14,11 @@ body {
     height: 100%;
     width: 100%;
     min-height: 100vh;
-    grid-template-rows: 60px 60px auto 60px;
+    grid-template-rows: 100px 60px 60px auto 60px;
     grid-template-areas: 
     "header"
     "gameInfo"
+    "resetBtn"
     "container"
     "footer";
 }
@@ -27,27 +32,71 @@ body {
 .footer {grid-area: footer;}
 
 /* HEADER */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+}
 
+.header h1 {
+    margin: 0;
+}
+
+/* GAME INFO */
+.gameInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+}
+
+/* RESET BTN */
+.resetBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+}
+
+.resetBtn button{
+    font-size: 20px;
+    font-weight: 600;
+    background: white;
+    border: 2px solid black;
+    border-radius: 20px;
+    width: 100px;
+    height: 40px;
+    padding: 5px 0;
+    text-align: center;
+    transition: 0.5s ease;
+}
+
+.resetBtn button:hover {
+    transform: scale(1.1);
+}
 
 /* CONTAINER */
 .container {
     margin: auto;
 }
 
+/* CONTAINER GAME BOARD*/
 .game-board {
     display: grid;
     margin: auto;
-    grid-template-rows: 100px 100px 100px;
-    grid-template-columns: 100px 100px 100px;
+    grid-template-rows: 120px 120px 120px;
+    grid-template-columns: 120px 120px 120px;
 }
 
 .tile {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     background: orange;
     border: 1px solid black;
 }
 
+/* CONTAINER START SCREEN*/
 .start-screen {
     width: 500px;
     display: flex;
@@ -56,11 +105,39 @@ body {
 }
 
 .start-tile {
-    border: 1px solid black;
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    text-align: center;
+    border: 2px solid black;
     width: 200px;
     height: 200px;
+    transition: 0.5s ease;
 }
 
+.start-tile:hover {
+    transform: scale(1.1);
+}
+
+.start-tile .start-type {
+    flex: 1;
+    font-size: 25px;
+}
+
+.start-tile .start-type p {
+    margin: 30px 0 0 0;
+}
+
+
+.start-tile .start-images {
+    flex: 2;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+
+/* CONTAINER PLAYER SCREEN*/
 .player-screen {
     width: 500px;
     display: flex;

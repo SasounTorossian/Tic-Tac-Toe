@@ -11,23 +11,41 @@
     <body>
         <div class="header">
             <h1 class="projectTitle">Tic-Tac-Toe</h1>
-            <button class="reset-button">TEST</button>
         </div>
 
         <div class="gameInfo">
-            <p></p>
+            <p>TEST TEXT</p>
+        </div>
+
+        <div class="resetBtn">
+            <button class="reset-button">Reset</button>
         </div>
 
         <div class="container" >
             <div class="game-board"></div>
+
             <div class="start-screen">
                 <div class="start-tile" id="PvP">
-                    <p>Player vs. Player</p>
+                    <div class="start-type">
+                        <p>Player vs. Player</p>
+                    </div>
+                    <div class="start-images">
+                        <img alt="Ai" src="images/human-facing-right.png" height="70px">
+                        <img alt="Ai" src="images/human-facing-left.png" height="70px"> 
+                    </div>
                 </div>
+
                 <div class="start-tile" id="PvAi">
-                    <p>Player vs Ai</p>
+                    <div class="start-type">
+                        <p>Player vs. Ai</p>
+                    </div>
+                    <div class="start-images">
+                        <img alt="Ai" src="images/human-facing-right.png" height="70px">
+                        <img alt="Ai" src="images/ai.png" height="70px">
+                    </div>
                 </div>
             </div>
+
             <div class="player-screen">
                 <div class="player-tile" id="player-1">
                     <p>Input Player Names</p>
@@ -126,7 +144,7 @@
 
                 startScreen.querySelectorAll(".start-tile").forEach(element => {
                     element.addEventListener('click', (e) => {
-                        if(e.target.id == "PvP") {
+                        if(e.currentTarget.id == "PvP") {
                             gameMode = "PvP"
                             radioContainer.classList.add("screen-hidden")
                             player2NameLabel.innerText = "Player 2 Name"
