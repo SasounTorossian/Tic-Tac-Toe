@@ -233,8 +233,12 @@
                     let div = document.querySelector(`[index="${bestMove}"]`)
                     div.classList.add("mark-hidden")
                     div.innerText = playerMark
-                    optionsMenu.showElementWithFade(div)
-                    gameBoard.checkGameOver()
+                    // Calling optionsMenu.showElementWithFade(div) normally doesn't work. Needs 1ms del
+                    // Don't know why. Normal call causes mark to appear instantly
+                    setTimeout(() => optionsMenu.showElementWithFade(div) , 10)
+                    // optionsMenu.showElementWithFade(div)
+                    gameBoard.checkGameOver()     
+
                 }
 
                 const getRandomDec = (a, b) => (Math.random() * (a - b) + b).toFixed(1)
@@ -398,6 +402,7 @@
                 }
 
                 const addMark = (e) => {
+                    
                     let div = e.target
                     let index = div.getAttribute("index")
                     div.classList.add("mark-hidden")
@@ -409,8 +414,7 @@
                     gameBoardArray[index] = mark
                     div.innerText = mark
                     optionsMenu.showElementWithFade(div)
-                    
-                    checkGameOver()     
+                    checkGameOver()   
                 }
 
                 const renderGameboard = () => {
