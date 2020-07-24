@@ -11,13 +11,11 @@
     <body>
         <div class="header">
             <h1 class="projectTitle">Tic-Tac-Toe</h1>
+            
         </div>
 
         <div class="gameInfo">
-            <p>TEST TEXT</p>
-        </div>
-
-        <div class="resetBtn">
+            <p></p>
             <button class="reset-button">Reset</button>
         </div>
 
@@ -95,7 +93,7 @@
                 let playerScreen = document.querySelector(".player-screen")
                 playerScreen.classList.add("screen-hidden")
 
-                let gameInfo = document.querySelector(".gameInfo")
+                let gameInfo = document.querySelector(".gameInfo p")
 
                 let radioContainer = document.querySelector(".radio-container")
                 let player2NameLabel = document.querySelector("#p2-name-label")
@@ -327,7 +325,7 @@
 
             // ===== GAME ENGINE =====
             const gameEngine = (() => {
-                let gameInfo = document.querySelector(".gameInfo")
+                let gameInfo = document.querySelector(".gameInfo p")
                 gameInfo.classList.add("screen-hidden")
                 let gameBoardContainer = document.querySelector(".game-board")
                 let gameEnd = false
