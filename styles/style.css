@@ -4,7 +4,7 @@
 
 html {
     height: 100%;
-    width: 100%
+    width: 100%;
 }
 
 body {
@@ -14,7 +14,7 @@ body {
     height: 100%;
     width: 100%;
     min-height: 100vh;
-    grid-template-rows: 100px 60px 60px auto 60px;
+    grid-template-rows: 100px 60px 60px auto 100px;
     grid-template-areas: 
     "header"
     "gameInfo"
@@ -93,10 +93,30 @@ body {
 }
 
 .tile {
+    
     width: 120px;
     height: 120px;
-    background: orange;
-    border: 1px solid black;
+    background: white;
+    border: 2px solid black;
+    font-size: 40px;
+    line-height: 120px;
+    text-align: center;
+}
+
+.tile[index="0"] {
+    border-radius: 20px 0 0 0;
+}
+
+.tile[index="2"] {
+    border-radius: 0 20px 0 0;
+}
+
+.tile[index="6"] {
+    border-radius: 0 0 0 20px;
+}
+
+.tile[index="8"] {
+    border-radius: 0 0 20px 0;
 }
 
 /* CONTAINER START SCREEN*/
@@ -243,7 +263,7 @@ select:focus{
 }
 
 .mark-hidden {
-    color: Orange;
+    color: white;
 }
 
 .mark-transition {
