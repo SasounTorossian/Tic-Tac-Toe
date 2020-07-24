@@ -246,18 +246,22 @@
                                 bestMove = i
                             }
                         }
-                    }
+                    }   
 
+                    setTimeout(() => placeMarkandCheckGame(gameBoardArray, bestMove) , 1000)
+
+                }
+
+                const placeMarkandCheckGame = (gameBoardArray, bestMove) => {
                     gameBoardArray[bestMove] = playerMark
                     let div = document.querySelector(`[index="${bestMove}"]`)
                     div.classList.add("mark-hidden")
                     div.innerText = playerMark
+                    
                     // Calling optionsMenu.showElementWithFade(div) normally doesn't work. Needs 1ms del
                     // Don't know why. Normal call causes mark to appear instantly
                     setTimeout(() => optionsMenu.showElementWithFade(div) , 10)
-                    // optionsMenu.showElementWithFade(div)
-                    gameBoard.checkGameOver()     
-
+                    gameBoard.checkGameOver()  
                 }
 
                 const getRandomDec = (a, b) => (Math.random() * (a - b) + b).toFixed(1)
@@ -360,6 +364,7 @@
                 const nextTurn = (gameBoard) => {
                     switchPlayer()
                     gameInfoWrite(`Current player is ${getCurrentPlayer().playerName}`)
+                    console.log(getCurrentPlayer().playerName)
                     if (currentPlayer == players[1] && gameMode == "PvAi") currentPlayer.AiPlay(gameBoard)
                 }
 
