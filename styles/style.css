@@ -73,6 +73,8 @@ body {
 }
 
 .resetBtn button:hover {
+    background: black;
+    color: white;
     transform: scale(1.1);
 }
 
@@ -112,7 +114,9 @@ body {
     border: 2px solid black;
     width: 200px;
     height: 200px;
+    border-radius: 10px;
     transition: 0.5s ease;
+    cursor: pointer;
 }
 
 .start-tile:hover {
@@ -127,7 +131,6 @@ body {
 .start-tile .start-type p {
     margin: 30px 0 0 0;
 }
-
 
 .start-tile .start-images {
     flex: 2;
@@ -146,9 +149,78 @@ body {
 }
 
 .player-tile {
-    border: 1px solid black;
-    width: 300px;
-    height: 200px;
+    border: 2px solid black;
+    width: 360px;
+    height: 220px;
+    border-radius: 10px;
+}
+
+.player-form {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+}
+
+.player-form .label-container {
+    font-size: 18px;
+}
+
+.player-form .input-container { 
+    font-size: 15px;
+    font-weight: 500;
+    border: 1.5px solid black; 
+    border-radius: 10px;
+}
+
+input:focus, 
+textarea:focus, 
+select:focus{
+    outline: none;
+}
+
+.radio-label {
+    font-size: 17px;
+    display: inline-block;
+    border: 1.5px solid black;
+    border-radius: 20px;
+    width: 90px;
+    padding: 5px;
+    margin: 0 5px;
+    text-align: center;
+    transition: 0.5s ease;
+    cursor: pointer;
+}
+
+.radio-input:checked + .radio-label {
+    background: black;
+    color: white;
+    transform: scale(1.1);
+}
+
+.radio-input {
+    display: none;
+}
+
+.submit-button {
+    font-size: 17px;
+    background: white;
+    border: 1.5px solid black;
+    border-radius: 20px;
+    padding: 5px;
+    margin: 0 5px;
+    width: 90px;
+    text-align: center;
+    transition: 0.5s ease;
+    outline: none;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background: black;
+    color: white;
+    transform: scale(1.1);
 }
 
 .screen-hidden {
@@ -179,24 +251,6 @@ body {
 
 .mark-transition.mark-hidden {
     color: black;
-}
-
-.radio-label {
-    display: inline-block;
-    border: 1px solid gray;
-    border-radius: 20px;
-    width: 70px;
-    padding: 5px 0;
-    text-align: center;
-}
-
-.radio-input:checked + .radio-label {
-    background: gray;
-    color: white;
-}
-
-.radio-input {
-    display: none;
 }
 
 /* FOOTER */
