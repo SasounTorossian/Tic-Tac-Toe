@@ -195,6 +195,11 @@ body {
     border-radius: 10px;
 }
 
+.player-form .p1-container, .player-form .p2-container{
+    align-self: flex-end;
+    margin: 0 25px
+}
+
 input:focus, 
 textarea:focus, 
 select:focus{
