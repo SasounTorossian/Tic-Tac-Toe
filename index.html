@@ -139,7 +139,7 @@
                             return
                         }
                     hideElementWithFade(playerScreen)
-                    setTimeout(() => PassOptionsToGameEngine() , 1000)
+                    setTimeout(() => PassOptionsToGameEngine() , 500)
                 })
 
                 startScreen.querySelectorAll(".start-tile").forEach(element => {
@@ -155,7 +155,7 @@
                             player2NameLabel.innerText = "Ai Name"
                         }
                         hideElementWithFade(startScreen)
-                        setTimeout(() => showElementWithFade(playerScreen) , 1000)
+                        setTimeout(() => showElementWithFade(playerScreen) , 500)
                     })                
                 })
 
@@ -380,7 +380,7 @@
                     optionsMenu.hideElementWithFade(gameInfo)
                     optionsMenu.hideElementWithFade(gameBoardContainer)
                     optionsMenu.hideElementWithFade(resetBtn)
-                    setTimeout(() => optionsMenu.showElementWithFade(startScreen) , 1500)
+                    setTimeout(() => optionsMenu.showElementWithFade(startScreen) , 500)
 
                     players.length = 0
                 })
