@@ -326,6 +326,8 @@ const gameEngine = (() => {
 
     const getCurrentPlayer = () => currentPlayer
 
+    const getGameMode = () => gameMode
+
     const gameInfoWrite = (string) => gameInfo.innerText = string
 
     const isGameOver = () => gameEnd
@@ -337,7 +339,8 @@ const gameEngine = (() => {
         getCurrentPlayer,
         gameOverScenario,
         isGameOver,
-        nextTurn
+        nextTurn,
+        getGameMode
     }
 
 })()
@@ -364,6 +367,8 @@ const gameBoard = (() => {
         let index = div.getAttribute("index")
         div.classList.add("mark-hidden")
 
+        // If currently Ai's turn, prevent player from putting in Ai's mark for them.
+        if (gameEngine.getCurrentPlayer() == gameEngine.getPlayers()[1] && gameEngine.getGameMode() == "PvAi") return
         if(gameEngine.isGameOver()) return
         if(div.innerText != "") return
 
