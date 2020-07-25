@@ -89,6 +89,7 @@
 
         <script>
 
+            // ===== OPTIONS MENU =====
             const optionsMenu = (() => {      
                 let playerForm = document.querySelector(".player-form")
                 let startScreen = document.querySelector(".start-screen")
@@ -110,6 +111,7 @@
                 let player1Name
                 let player2Name
 
+                // Resets input form and variables.
                 const resetMenu = () => {
                     playerForm.reset()
                     player1Name = ""
@@ -118,6 +120,7 @@
                     AiDifficulty = ""
                 }
 
+                // Creates player objects and passes them to game engine for initialization
                 const PassOptionsToGameEngine = () => {
                     let player1 = Player(player1Name, "X")
                     let player2
@@ -128,6 +131,7 @@
                     resetMenu()
                 }
 
+                // Submits form data to PassOptionsToGameEngine function.
                 submitBtn.addEventListener('click', (e) => {
                     player1Name = document.querySelector('#p1-name-input').value
                     player2Name = document.querySelector('#p2-name-input').value
@@ -143,6 +147,7 @@
                     setTimeout(() => PassOptionsToGameEngine() , 500)
                 })
 
+                // Start screen to choose game type.
                 startScreen.querySelectorAll(".start-tile").forEach(element => {
                     element.addEventListener('click', (e) => {
                         if(e.currentTarget.id == "PvP") {
@@ -160,6 +165,7 @@
                     })                
                 })
 
+                // Adds transition class to element, then removes hidden class for smooth fade-in
                 const showElementWithFade = (elem) => {
                     if(elem.classList.contains("tile")) {
                         elem.classList.add("mark-transition")
@@ -173,6 +179,7 @@
                     }
                 }
 
+                // Ads transition class to element, then adds hidden class for smooth fade-out
                 const hideElementWithFade = (elem) => {
                     if (elem == gameBoardContainer) {
                         elem.classList.add("screen-transition-grid")
@@ -181,6 +188,7 @@
                     elem.classList.add("screen-hidden")
                 }
 
+                // Transition end events to remove transition class when element finishes animation.
                 startScreen.addEventListener('transitionend', (e) => {
                     startScreen.classList.remove("screen-transition")
                 })
@@ -229,6 +237,7 @@
                 let playerMark = mark
                 let AiDifficulty = aiD
 
+                // Begins Ai gameplay. Places intital O mark then begins minimax algorithm to find best option.
                 const AiPlay = (gameBoardArray) => {
                     let bestScore = -Infinity
                     let bestMove
@@ -248,22 +257,24 @@
                         }
                     }   
 
+                    // Delay mark placement to give Ai a "thinking" period.
                     setTimeout(() => placeMarkandCheckGame(gameBoardArray, bestMove) , 1000)
 
                 }
 
+                // Places mark down and updates gameboard array. Mark is slowly faded in.
                 const placeMarkandCheckGame = (gameBoardArray, bestMove) => {
                     gameBoardArray[bestMove] = playerMark
                     let div = document.querySelector(`[index="${bestMove}"]`)
                     div.classList.add("mark-hidden")
                     div.innerText = playerMark
                     
-                    // Calling optionsMenu.showElementWithFade(div) normally doesn't work. Needs 1ms del
-                    // Don't know why. Normal call causes mark to appear instantly
+                    // Calling optionsMenu.showElementWithFade(div) normally doesn't work. Needs 10ms del to prevent instantaneous appearance. Caused by function exiting too early and forcing a transition.
                     setTimeout(() => optionsMenu.showElementWithFade(div) , 10)
                     gameBoard.checkGameOver()  
                 }
 
+                // Grouping of functions used to determine AI difficulty. Assigns weighting to final minimax score based on dificulty chosen.
                 const getRandomDec = (a, b) => (Math.random() * (a - b) + b).toFixed(1)
 
                 const easyMode = () => getRandomDec(0.1, 0.2)
@@ -279,12 +290,14 @@
                     else return 1
                 }
 
+                // Converts string result of checkGameboard() func into a score value.
                 let scores = {
                     "O": 10,
                     "X": -10,
                     "TIE": 0
                 }
 
+                // Minimax algorithm implementation, using alpha-beta pruning to speed up calculations. 
                 const minimax = (gameBoardArray, depth, alpha, beta, isMaximising) => {
                     let result = gameBoard.checkGameboard()
                     if (result !== null) return scores[result]
@@ -343,6 +356,7 @@
 
                 let startScreen = document.querySelector(".start-screen")
 
+                // Initializes gameboard and gameEngine variables.
                 const startGame = (p1, p2, gm) => {
                     addPlayers(p1, p2)
                     gameBoard.startGameBoard()
@@ -353,14 +367,17 @@
                     gameInfoWrite(`Current player is ${getCurrentPlayer().playerName}`)
                 }
 
+                // Adds players to players[] array, then assigns the first player to go first
                 const addPlayers = (p1, p2) => {
                     players.push(p1)
                     players.push(p2)
                     assignPlayers()
                 }
 
+                // Assigns first player in players[] array as the current player
                 const assignPlayers = () => currentPlayer = players[0]
 
+                // Switches current player, updates game info screen to alert user. If current player is the Ai, and game mode is set to Ai, then call AiPlay() function
                 const nextTurn = (gameBoard) => {
                     switchPlayer()
                     gameInfoWrite(`Current player is ${getCurrentPlayer().playerName}`)
@@ -368,10 +385,12 @@
                     if (currentPlayer == players[1] && gameMode == "PvAi") currentPlayer.AiPlay(gameBoard)
                 }
 
+                // Alternates between players
                 const switchPlayer = () => {
                     currentPlayer = (currentPlayer == players[0]) ? players[1] : players[0]
                 }
 
+                // If game over, alert user(s) and reveal reset button via fade-in.
                 const gameOverScenario = (result) => {
                     if(result == "TIE") gameInfoWrite(`It's a tie.`)
                     else gameInfoWrite(`Congrats, ${getCurrentPlayer().playerName} won`)
@@ -380,6 +399,7 @@
                     optionsMenu.showElementWithFade(resetBtn)
                 }
 
+                // Creates reset button and assigns event to it. When reset button is pressed, gameinfo, gameboard, and reset button are all faded out, and initial start screen is faded in
                 resetBtn = document.getElementsByClassName("reset-button")[0]
                 resetBtn.classList.add("screen-hidden")
                 resetBtn.addEventListener('click', (e) => {
@@ -391,6 +411,7 @@
                     players.length = 0
                 })
 
+                // Helper functions for overall code.
                 const getPlayers = () => players
 
                 const getCurrentPlayer = () => currentPlayer
@@ -417,16 +438,18 @@
 
                 let gameBoardArray = new Array(9).fill("")
 
+                // StartGameboard renders gameboard. Separate function due to possibility of adding functionality later.
                 const startGameBoard = () => {
                     renderGameboard()
                 }
 
+                // Sets all elements of gameboard array back to ""
                 const resetGameBoard = () => {
                     gameBoardArray = gameBoardArray.map(el => "")
                 }
 
+                // Adds player mark. If gameover or space not empty, return.
                 const addMark = (e) => {
-                    
                     let div = e.target
                     let index = div.getAttribute("index")
                     div.classList.add("mark-hidden")
@@ -441,6 +464,7 @@
                     checkGameOver()   
                 }
 
+                // Renders gameboard by creating div for each gameboard array element. Assigns array index to div as attribute.
                 const renderGameboard = () => {
                     gameBoardArray.forEach(function(elem, idx) {
                         let div = document.createElement("div")
@@ -452,7 +476,7 @@
                     optionsMenu.showElementWithFade(gameBoardContainer)
                 }
 
-
+                // Check status of game to see if over. If not then call nextTurn(), if so then call gameOverScenario() from game engine.
                 const checkGameOver = () => {
                     if(checkGameboard() == null) {
                         gameEngine.nextTurn(gameBoardArray)
@@ -463,6 +487,7 @@
                     }
                 }
                 
+                // List of array positions that, if of similar mark, would inidicate a winning combination.
                 const winningCombos = [["0", "1", "2"], /* Top horizontal     */
                                        ["3", "4", "5"], /* Middle horizontal  */
                                        ["6", "7", "8"], /* Bottom horizontal  */
@@ -472,6 +497,7 @@
                                        ["0", "4", "8"], /* Top-left diagonal  */
                                        ["2", "4", "6"]] /* Top-right diagonal */
 
+                // Cycles through winning combo array and checks against current gameboard array to find winning player. Returns tie if gameboard is full, returns null if game is ongoing.
                 const checkGameboard = () => {
                     let player1Win = winningCombos.some(arr => 
                                                 arr.every(el => 
@@ -495,11 +521,6 @@
                     checkGameOver
                 }
             })()
-
-            // let player1 = Player("player1Name", "X")
-            // let player2 = Player("w", "O")
-            // gameEngine.startGame(player1, player2, "PvP")
-
         </script>
     </body>
 </html>
