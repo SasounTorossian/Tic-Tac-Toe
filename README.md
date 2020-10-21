@@ -8,7 +8,7 @@ Generally works well though animations could be better.
 
 Happy with elegent solution to finding winning combination on board via higher order functions. I.e. For "X" tiles: 
 
-```javasscript
+```javascript
 let player1Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == "X")) 
 ```
 
