@@ -8,9 +8,9 @@ Generally works well though animations could be better.
 
 Happy with elegent solution to finding winning combination on board via higher order functions. I.e. For "X" tiles: 
 
-'''
+```javasscript
 let player1Win = winningCombos.some(arr => arr.every(el => gameBoardArray[el] == "X")) 
-'''
+```
 
 AI is implemented using minimax algorithm to recursively iterate through all possible moves. In order to speed up algorithm, alpha-beta pruning was used to discard unnecessary recursion.
 AI difficulty was implemented by using randomy generated value within a certain range to negatively weigh the final minimax score. Lower difficulty ratings divide score by 0.1-0.2, while
